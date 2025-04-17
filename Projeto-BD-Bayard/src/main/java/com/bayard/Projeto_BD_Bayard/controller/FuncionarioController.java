@@ -4,9 +4,12 @@ import com.bayard.Projeto_BD_Bayard.model.Funcionario;
 import com.bayard.Projeto_BD_Bayard.repository.FuncionarioRepositorio;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 public class FuncionarioController {
@@ -17,7 +20,18 @@ public class FuncionarioController {
         this.funcionarioRepositorio = new FuncionarioRepositorio();
     }
 
-    @PostMapping("/funcionario/add")
+    @GetMapping("funcionarios")
+    public ResponseEntity<List<Funcionario>> listarTodosFuncionarios() {
+        try {
+            List<Funcionario> funcionarios = funcionarioRepositorio.listarTodosFuncionarios();
+            return ResponseEntity.ok(funcionarios);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        }
+    }
+
+    @PostMapping("/funcionarios/add")
     public ResponseEntity<String> inserirFuncionario(@RequestBody Funcionario funcionario) {
         try {
             funcionarioRepositorio.inserirFuncionario(funcionario);

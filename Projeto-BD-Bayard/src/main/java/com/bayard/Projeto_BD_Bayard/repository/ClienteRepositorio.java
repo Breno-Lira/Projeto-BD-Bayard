@@ -4,7 +4,10 @@ import com.bayard.Projeto_BD_Bayard.model.Cliente;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClienteRepositorio {
 
@@ -32,7 +35,37 @@ public class ClienteRepositorio {
             // opcionalmente relança para ser tratado em outro lugar
             throw new RuntimeException(e);
         }
+    }
 
+    public List<Cliente> listarTodosClientes() {
+        List<Cliente> clientes = new ArrayList<>();
+        String sql = "SELECT * FROM Cliente";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Cliente cliente = new Cliente();
+                cliente.setCpf(rs.getString("cpf"));
+                cliente.setNome(rs.getString("nome"));
+                cliente.setInteresse(rs.getString("interesse"));
+                cliente.setDataNascimento(rs.getDate("data_nascimento").toLocalDate());
+                cliente.setCidade(rs.getString("cidade"));
+                cliente.setBairro(rs.getString("bairro"));
+                cliente.setRua(rs.getString("rua"));
+                cliente.setNumero(rs.getInt("numero"));
+                cliente.setCep(rs.getString("cep"));
+                cliente.setComplemento(rs.getString("complemento"));
+
+                clientes.add(cliente);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao listar clientes: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+        return clientes;
     }
 
 
