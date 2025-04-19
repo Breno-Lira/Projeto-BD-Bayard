@@ -52,7 +52,7 @@ public class ClienteController {
         }
     }
 
-    @GetMapping("/clientes/editar/{cpf}")
+    @GetMapping("/clientes/{cpf}")
     public ResponseEntity<Cliente> buscarClientePorCpf(@PathVariable String cpf) {
         try {
             Cliente cliente = clienteRepositorio.buscarClientePorCpf(cpf);

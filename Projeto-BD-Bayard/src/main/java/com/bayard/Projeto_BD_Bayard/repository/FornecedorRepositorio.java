@@ -51,5 +51,59 @@ public class FornecedorRepositorio {
         return fornecedores;
     }
 
+    public void deletarFornecedorPorCnpj(String cnpj) throws SQLException {
+        String sql = "DELETE FROM Fornecedor WHERE cnpj = ?";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, cnpj);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Erro ao deletar fornecedor: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void atualizarFornecedor(Fornecedor fornecedor) throws SQLException {
+        String sql = "UPDATE Fornecedor SET nome = ?, transportaadora = ? WHERE cnpj = ?";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, fornecedor.getNome());
+            stmt.setString(2, fornecedor.getTransportaadora());
+            stmt.setString(3, fornecedor.getCnpj());
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Erro ao atualizar fornecedor: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Fornecedor buscarFornecedorPorCnpj(String cnpj) throws SQLException {
+        String sql = "SELECT * FROM Fornecedor WHERE cnpj = ?";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, cnpj);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                Fornecedor fornecedor = new Fornecedor();
+                fornecedor.setCnpj(rs.getString("cnpj"));
+                fornecedor.setNome(rs.getString("nome"));
+                fornecedor.setTransportaadora(rs.getString("transportaadora"));
+                return fornecedor;
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar fornecedor: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
 
 }
