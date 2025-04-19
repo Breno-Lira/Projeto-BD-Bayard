@@ -40,6 +40,26 @@ public class DevolucaoFornecedorController {
         }
     }
 
+    @DeleteMapping("devolucaoFornecedores/delete/{id_dev_fornecedor}")
+    public ResponseEntity<String> deletarDevolucao(@PathVariable String id_dev_fornecedor) {
+        try {
+            devolucaoFornecedorRepositorio.deletarDevolucaoPorId(id_dev_fornecedor);
+            return ResponseEntity.ok("Devolução do fornecedor excluída com sucesso!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao excluir devolução do fornecedor: " + e.getMessage());
+        }
+    }
 
-
+    @PutMapping("devolucaoFornecedores/editar/{id_dev_fornecedor}")
+    public ResponseEntity<String> atualizarDevolucaoFornecedor(@PathVariable String id_dev_fornecedor, @RequestBody DevolucaoFornecedor devolucaoFornecedor) {
+        try {
+            devolucaoFornecedor.setIdDevolucao(id_dev_fornecedor);
+            devolucaoFornecedorRepositorio.atualizarDevolucaoFornecedor(devolucaoFornecedor);
+            return ResponseEntity.ok("Devolucao fornecedor atualizada com sucesso!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao atualizar devolucao fornecedor: " + e.getMessage());
+        }
+    }
 }

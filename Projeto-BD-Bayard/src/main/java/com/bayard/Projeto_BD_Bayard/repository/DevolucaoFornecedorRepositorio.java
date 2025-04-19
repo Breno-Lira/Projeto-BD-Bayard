@@ -50,4 +50,38 @@ public class DevolucaoFornecedorRepositorio {
 
         return devolucaoFornecedores;
     }
+
+    public void deletarDevolucaoPorId(String id_dev_fornecedor) throws SQLException{
+        String sql = "DELETE FROM Devolucao_fornecedor WHERE id_dev_fornecedor = ?";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, id_dev_fornecedor);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Erro ao deletar devolução fornecedor: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void atualizarDevolucaoFornecedor(DevolucaoFornecedor devolucaoFornecedor) throws SQLException{
+        String sql = "UPDATE Devolucao_fornecedor SET id_dev_fornecedor = ?, estoquista_cpf = ?, fornecedor_cnpj = ?, codigo_produto = ? " +
+                "WHERE id_dev_fornecedor = ?";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, devolucaoFornecedor.getIdDevolucao());
+            stmt.setString(2, devolucaoFornecedor.getFkEstoquistaCPF());
+            stmt.setString(3, devolucaoFornecedor.getFkFornecedorCNPJ());
+            stmt.setString(4, devolucaoFornecedor.getFkProdutoCodigo());
+            stmt.setString(5, devolucaoFornecedor.getIdDevolucao());
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Erro ao atualizar devolução fornecedor: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
 }

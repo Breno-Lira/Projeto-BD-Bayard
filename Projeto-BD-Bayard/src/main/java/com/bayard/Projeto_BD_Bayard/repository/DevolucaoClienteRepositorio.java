@@ -51,4 +51,39 @@ public class DevolucaoClienteRepositorio {
 
         return devolucaoClientes;
     }
+
+    public void deletarDevolucaoPorId(String id_dev) throws SQLException {
+        String sql = "DELETE FROM Devolucao_cliente WHERE id_dev = ?";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, id_dev);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Erro ao deletar devolução cliente: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void atualizarDevolucaoCliente(DevolucaoCliente devolucaoCliente) throws SQLException{
+        String sql = "UPDATE Devolucao_cliente SET id_dev = ?, codigo_produto = ?, cliente_cpf = ?, vendedor_cpf = ?" +
+                "WHERE id_dev = ?";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, devolucaoCliente.getIdDevolucao());
+            stmt.setString(2, devolucaoCliente.getFkProdutoCodigo());
+            stmt.setString(3, devolucaoCliente.getFkClienteCPF());
+            stmt.setString(4, devolucaoCliente.getFkVendedorCPF());
+            stmt.setString(5, devolucaoCliente.getIdDevolucao());
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Erro ao atualizar devolução cliente: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
 }
