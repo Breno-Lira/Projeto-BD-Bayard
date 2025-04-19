@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin("http://localhost:3000")
 public class ProdutoController {
 
     private final ProdutoRepositorio produtoRepositorio;
@@ -60,4 +61,20 @@ public class ProdutoController {
                     .body("Erro ao atualizar produto: " + e.getMessage());
         }
     }
+
+    @GetMapping("/produtos/{codigo}")
+    public ResponseEntity<?> buscarProdutoPorCodigo(@PathVariable String codigo) {
+        try {
+            Produto produto = produtoRepositorio.buscarProdutoPorCodigo(codigo);
+            if (produto != null) {
+                return ResponseEntity.ok(produto);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao buscar produto: " + e.getMessage());
+        }
+    }
+
 }

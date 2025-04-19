@@ -85,4 +85,30 @@ public class ProdutoRepositorio {
         }
     }
 
+    public Produto buscarProdutoPorCodigo(String codigo) throws SQLException {
+        String sql = "SELECT * FROM Produto WHERE codigo = ?";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, codigo);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                Produto produto = new Produto();
+                produto.setCodigo(rs.getString("codigo"));
+                produto.setNome(rs.getString("nome"));
+                produto.setCor(rs.getString("cor"));
+                produto.setPreco(rs.getDouble("preco"));
+                return produto;
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar produto: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+
 }
