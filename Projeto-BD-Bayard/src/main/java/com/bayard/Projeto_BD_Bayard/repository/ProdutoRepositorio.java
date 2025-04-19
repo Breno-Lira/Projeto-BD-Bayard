@@ -28,7 +28,7 @@ public class ProdutoRepositorio {
 
     public List<Produto> listarTodosProdutos() {
         List<Produto> produtos = new ArrayList<>();
-        String sql = "SELECT * FROM Produto";
+        String sql = "SELECT * FROM Produto WHERE codigo NOT IN (SELECT codigo FROM Vestuario)";
 
         try (Connection conn = ConexaoBD.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql);
