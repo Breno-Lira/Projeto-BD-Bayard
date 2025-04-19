@@ -4,10 +4,7 @@ import com.bayard.Projeto_BD_Bayard.model.Produto;
 import com.bayard.Projeto_BD_Bayard.repository.ProdutoRepositorio;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -38,6 +35,29 @@ public class ProdutoController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Erro ao inserir produto: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("produtos/delete/{codigo}")
+    public ResponseEntity<String> deletarProduto(@PathVariable String codigo) {
+        try {
+            produtoRepositorio.deletarProduto(codigo);
+            return ResponseEntity.ok("Produto excluído com sucesso!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao excluir produto: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("produtos/editar/{codigo}")
+    public ResponseEntity<String> atualizarProduto(@PathVariable String codigo, @RequestBody Produto produto) {
+        try {
+            produto.setCodigo(codigo); // garante que vai usar o CPF certo
+            produtoRepositorio.atualizarProduto(produto);
+            return ResponseEntity.ok("Produto atualizado com sucesso!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao atualizar produto: " + e.getMessage());
         }
     }
 }

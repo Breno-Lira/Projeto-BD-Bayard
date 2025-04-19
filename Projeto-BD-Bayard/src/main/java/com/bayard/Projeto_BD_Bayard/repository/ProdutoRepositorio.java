@@ -51,4 +51,38 @@ public class ProdutoRepositorio {
         return produtos;
     }
 
+    public void deletarProduto(String codigo) throws SQLException{
+        String sql = "DELETE FROM Produto WHERE codigo = ?";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, codigo);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Erro ao deletar produto: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void atualizarProduto(Produto produto) throws SQLException {
+        String sql = "UPDATE Produto SET codigo = ?, nome = ?, cor = ?, preco = ?" +
+                "WHERE codigo = ?";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, produto.getCodigo());
+            stmt.setString(2, produto.getNome());
+            stmt.setString(3, produto.getCor());
+            stmt.setDouble(4, produto.getPreco());
+            stmt.setString(5, produto.getCodigo());
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Erro ao atualizar produto: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
 }
