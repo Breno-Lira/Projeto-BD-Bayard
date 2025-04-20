@@ -1,7 +1,6 @@
 package com.bayard.Projeto_BD_Bayard.controller;
 
 import com.bayard.Projeto_BD_Bayard.model.Estoquista;
-import com.bayard.Projeto_BD_Bayard.model.Vestuario;
 import com.bayard.Projeto_BD_Bayard.repository.EstoquistaRepositorio;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
