@@ -12,14 +12,18 @@ import java.util.List;
 public class VendaRepositorio {
 
     public void inserirVenda(Venda venda) throws SQLException {
-        String sql = "INSERT INTO Venda (vendedor_cpf, codigo_produto, cliente_cpf) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO Venda (idVenda, dataVenda, valorSubtotal, vendedor_cpf, codigo_produto, cliente_cpf) " +
+                "VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = ConexaoBD.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, venda.getFk_vendedor_cpf());
-            stmt.setString(2, venda.getFk_codigo_produto());
-            stmt.setString(3, venda.getFk_cliente_cpf());
+            stmt.setString(1, venda.getIdVenda());
+            stmt.setDate(2, java.sql.Date.valueOf(venda.getDataVenda()));
+            stmt.setDouble(3, venda.getValorSubtotal());
+            stmt.setString(4, venda.getFkVendedorCPF());
+            stmt.setString(5, venda.getFkProdutoCodigo());
+            stmt.setString(6, venda.getFkClienteCPF());
 
             stmt.executeUpdate();
         }
@@ -35,9 +39,12 @@ public class VendaRepositorio {
 
             while (rs.next()) {
                 Venda venda = new Venda();
-                venda.setFk_vendedor_cpf(rs.getString("vendedor_cpf"));;
-                venda.setFk_codigo_produto(rs.getString("codigo_produto"));
-                venda.setFk_cliente_cpf(rs.getString("cliente_cpf"));
+                venda.setIdVenda(rs.getString("idVenda"));
+                venda.setDataVenda(rs.getDate("dataVenda").toLocalDate());
+                venda.setValorSubtotal(rs.getDouble("valorSubtotal"));
+                venda.setFkVendedorCPF(rs.getString("vendedor_cpf"));
+                venda.setFkProdutoCodigo(rs.getString("codigo_produto"));
+                venda.setFkClienteCPF(rs.getString("cliente_cpf"));
 
                 vendas.add(venda);
             }
@@ -46,8 +53,7 @@ public class VendaRepositorio {
             System.err.println("Erro ao listar as vendas: " + e.getMessage());
             throw new RuntimeException(e);
         }
+
         return vendas;
     }
-
-
 }

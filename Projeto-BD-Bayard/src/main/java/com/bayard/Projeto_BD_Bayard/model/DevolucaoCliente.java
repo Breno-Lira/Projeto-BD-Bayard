@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,4 +14,5 @@ public class DevolucaoCliente {
     private String fkProdutoCodigo;
     private String fkClienteCPF;
     private String fkVendedorCPF;
+    private LocalDate dataDevolucao;
 }

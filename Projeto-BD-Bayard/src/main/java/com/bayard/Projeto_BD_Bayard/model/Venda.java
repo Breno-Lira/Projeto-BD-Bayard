@@ -4,11 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Venda {
-    private String fk_vendedor_cpf;
-    private String fk_codigo_produto;
-    private String fk_cliente_cpf;
+    private String idVenda;
+    private LocalDate dataVenda;
+    private double valorSubtotal;
+    private String fkVendedorCPF;
+    private String fkProdutoCodigo;
+    private String fkClienteCPF;
 }

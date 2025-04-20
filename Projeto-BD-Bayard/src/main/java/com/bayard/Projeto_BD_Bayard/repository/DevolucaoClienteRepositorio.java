@@ -12,7 +12,8 @@ import java.util.List;
 public class DevolucaoClienteRepositorio {
 
     public void inserirDevolucaoCliente(DevolucaoCliente devolucaoCliente) throws SQLException {
-        String sql = "INSERT INTO Devolucao_cliente (id_dev, codigo_produto, cliente_cpf, vendedor_cpf) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Devolucao_cliente (id_dev, codigo_produto, cliente_cpf, vendedor_cpf, dataDevolucao) " +
+                "VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = ConexaoBD.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -21,6 +22,7 @@ public class DevolucaoClienteRepositorio {
             stmt.setString(2, devolucaoCliente.getFkProdutoCodigo());
             stmt.setString(3, devolucaoCliente.getFkClienteCPF());
             stmt.setString(4, devolucaoCliente.getFkVendedorCPF());
+            stmt.setDate(5, java.sql.Date.valueOf(devolucaoCliente.getDataDevolucao()));
 
             stmt.executeUpdate();
         }
@@ -40,6 +42,7 @@ public class DevolucaoClienteRepositorio {
                 devolucaoCliente.setFkProdutoCodigo(rs.getString("codigo_produto"));
                 devolucaoCliente.setFkClienteCPF(rs.getString("cliente_cpf"));
                 devolucaoCliente.setFkVendedorCPF(rs.getString("vendedor_cpf"));
+                devolucaoCliente.setDataDevolucao(rs.getDate("dataDevolucao").toLocalDate());
 
                 devolucaoClientes.add(devolucaoCliente);
             }
@@ -66,17 +69,17 @@ public class DevolucaoClienteRepositorio {
         }
     }
 
-    public void atualizarDevolucaoCliente(DevolucaoCliente devolucaoCliente) throws SQLException{
-        String sql = "UPDATE Devolucao_cliente SET id_dev = ?, codigo_produto = ?, cliente_cpf = ?, vendedor_cpf = ?" +
+    public void atualizarDevolucaoCliente(DevolucaoCliente devolucaoCliente) throws SQLException {
+        String sql = "UPDATE Devolucao_cliente SET codigo_produto = ?, cliente_cpf = ?, vendedor_cpf = ?, dataDevolucao = ? " +
                 "WHERE id_dev = ?";
 
         try (Connection conn = ConexaoBD.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, devolucaoCliente.getIdDevolucao());
-            stmt.setString(2, devolucaoCliente.getFkProdutoCodigo());
-            stmt.setString(3, devolucaoCliente.getFkClienteCPF());
-            stmt.setString(4, devolucaoCliente.getFkVendedorCPF());
+            stmt.setString(1, devolucaoCliente.getFkProdutoCodigo());
+            stmt.setString(2, devolucaoCliente.getFkClienteCPF());
+            stmt.setString(3, devolucaoCliente.getFkVendedorCPF());
+            stmt.setDate(4, java.sql.Date.valueOf(devolucaoCliente.getDataDevolucao()));
             stmt.setString(5, devolucaoCliente.getIdDevolucao());
 
             stmt.executeUpdate();
@@ -85,5 +88,4 @@ public class DevolucaoClienteRepositorio {
             throw new RuntimeException(e);
         }
     }
-
 }

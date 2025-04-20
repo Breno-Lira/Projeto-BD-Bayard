@@ -11,8 +11,10 @@ import java.util.List;
 
 public class DevolucaoFornecedorRepositorio {
 
-    public void inserirDevolucaoFornecedor(DevolucaoFornecedor devolucaoFornecedor) throws SQLException{
-        String sql = "INSERT INTO Devolucao_fornecedor (id_dev_fornecedor, estoquista_cpf, fornecedor_cnpj, codigo_produto) VALUES (?, ?, ?, ?)";
+    public void inserirDevolucaoFornecedor(DevolucaoFornecedor devolucaoFornecedor) throws SQLException {
+        String sql = "INSERT INTO Devolucao_fornecedor (id_dev_fornecedor, estoquista_cpf, fornecedor_cnpj, codigo_produto, dataDevolucao) " +
+                "VALUES (?, ?, ?, ?, ?)";
+
         try (Connection conn = ConexaoBD.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -20,6 +22,7 @@ public class DevolucaoFornecedorRepositorio {
             stmt.setString(2, devolucaoFornecedor.getFkEstoquistaCPF());
             stmt.setString(3, devolucaoFornecedor.getFkFornecedorCNPJ());
             stmt.setString(4, devolucaoFornecedor.getFkProdutoCodigo());
+            stmt.setDate(5, java.sql.Date.valueOf(devolucaoFornecedor.getDataDevolucao()));
 
             stmt.executeUpdate();
         }
@@ -39,6 +42,7 @@ public class DevolucaoFornecedorRepositorio {
                 devolucaoFornecedor.setFkEstoquistaCPF(rs.getString("estoquista_cpf"));
                 devolucaoFornecedor.setFkFornecedorCNPJ(rs.getString("fornecedor_cnpj"));
                 devolucaoFornecedor.setFkProdutoCodigo(rs.getString("codigo_produto"));
+                devolucaoFornecedor.setDataDevolucao(rs.getDate("dataDevolucao").toLocalDate());
 
                 devolucaoFornecedores.add(devolucaoFornecedor);
             }
@@ -51,7 +55,7 @@ public class DevolucaoFornecedorRepositorio {
         return devolucaoFornecedores;
     }
 
-    public void deletarDevolucaoPorId(String id_dev_fornecedor) throws SQLException{
+    public void deletarDevolucaoPorId(String id_dev_fornecedor) throws SQLException {
         String sql = "DELETE FROM Devolucao_fornecedor WHERE id_dev_fornecedor = ?";
 
         try (Connection conn = ConexaoBD.conectar();
@@ -65,9 +69,9 @@ public class DevolucaoFornecedorRepositorio {
         }
     }
 
-    public void atualizarDevolucaoFornecedor(DevolucaoFornecedor devolucaoFornecedor) throws SQLException{
-        String sql = "UPDATE Devolucao_fornecedor SET id_dev_fornecedor = ?, estoquista_cpf = ?, fornecedor_cnpj = ?, codigo_produto = ? " +
-                "WHERE id_dev_fornecedor = ?";
+    public void atualizarDevolucaoFornecedor(DevolucaoFornecedor devolucaoFornecedor) throws SQLException {
+        String sql = "UPDATE Devolucao_fornecedor SET id_dev_fornecedor = ?, estoquista_cpf = ?, fornecedor_cnpj = ?, " +
+                "codigo_produto = ?, dataDevolucao = ? WHERE id_dev_fornecedor = ?";
 
         try (Connection conn = ConexaoBD.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -76,7 +80,8 @@ public class DevolucaoFornecedorRepositorio {
             stmt.setString(2, devolucaoFornecedor.getFkEstoquistaCPF());
             stmt.setString(3, devolucaoFornecedor.getFkFornecedorCNPJ());
             stmt.setString(4, devolucaoFornecedor.getFkProdutoCodigo());
-            stmt.setString(5, devolucaoFornecedor.getIdDevolucao());
+            stmt.setDate(5, java.sql.Date.valueOf(devolucaoFornecedor.getDataDevolucao()));
+            stmt.setString(6, devolucaoFornecedor.getIdDevolucao());
 
             stmt.executeUpdate();
         } catch (SQLException e) {
