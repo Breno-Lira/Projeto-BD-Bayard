@@ -38,4 +38,15 @@ public class VendaController {
                     .body("Erro ao inserir venda: " + e.getMessage());
         }
     }
+
+    @DeleteMapping("vendas/delete/{idVenda}")
+    public ResponseEntity<String> deletarVenda(@PathVariable String idVenda) {
+        try {
+            vendaRepositorio.deletarVenda(idVenda);
+            return ResponseEntity.ok("Venda excluída com sucesso!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao excluir venda: " + e.getMessage());
+        }
+    }
 }

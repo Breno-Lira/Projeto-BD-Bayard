@@ -56,4 +56,18 @@ public class VendaRepositorio {
 
         return vendas;
     }
+
+    public void deletarVenda(String idVenda) throws SQLException{
+        String sql = "DELETE FROM Venda WHERE idVenda = ?";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, idVenda);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Erro ao deletar produto: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
 }
