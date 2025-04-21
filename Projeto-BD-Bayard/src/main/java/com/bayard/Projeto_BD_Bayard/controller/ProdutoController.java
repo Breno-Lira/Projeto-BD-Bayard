@@ -28,6 +28,16 @@ public class ProdutoController {
         }
     }
 
+    @GetMapping("produtos2")
+    public ResponseEntity<List<Produto>> listarTodosProdutos2() {
+        try {
+            List<Produto> produtos = produtoRepositorio.listarTodosProdutos2();
+            return ResponseEntity.ok(produtos);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @PostMapping("/produtos/add")
     public ResponseEntity<String> inserirProduto(@RequestBody Produto produto) {
         try {

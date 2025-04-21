@@ -51,6 +51,31 @@ public class ProdutoRepositorio {
         return produtos;
     }
 
+    public List<Produto> listarTodosProdutos2() {
+        List<Produto> produtos = new ArrayList<>();
+        String sql = "SELECT * FROM Produto ";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Produto produto = new Produto();
+                produto.setCodigo(rs.getString("codigo"));
+                produto.setNome(rs.getString("nome"));
+                produto.setCor(rs.getString("cor"));
+                produto.setPreco(rs.getDouble("preco"));
+
+                produtos.add(produto);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao listar produtos: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+        return produtos;
+    }
+
     public void deletarProduto(String codigo) throws SQLException{
         String sql = "DELETE FROM Produto WHERE codigo = ?";
 

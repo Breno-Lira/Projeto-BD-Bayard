@@ -28,12 +28,24 @@ public class VendaController {
         }
     }
 
+   /* @PostMapping("/vendas/add")
+    public ResponseEntity<String> inserirVenda(@RequestBody Venda venda) {
+        try {
+            vendaRepositorio.inserirVenda(venda);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Venda inserida com sucesso!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao inserir venda: " + e.getMessage());
+        }
+    }*/
+
     @PostMapping("/vendas/add")
     public ResponseEntity<String> inserirVenda(@RequestBody Venda venda) {
         try {
             vendaRepositorio.inserirVenda(venda);
             return ResponseEntity.status(HttpStatus.CREATED).body("Venda inserida com sucesso!");
         } catch (Exception e) {
+            e.printStackTrace(); // Mostra o erro completo no console
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Erro ao inserir venda: " + e.getMessage());
         }

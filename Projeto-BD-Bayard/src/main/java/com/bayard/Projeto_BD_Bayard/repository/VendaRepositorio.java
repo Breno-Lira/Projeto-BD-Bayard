@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +20,13 @@ public class VendaRepositorio {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, venda.getIdVenda());
-            stmt.setDate(2, java.sql.Date.valueOf(venda.getDataVenda()));
+
+            LocalDate dataVenda = venda.getDataVenda();
+            if (dataVenda == null) {
+                dataVenda = LocalDate.now();
+            }
+            stmt.setDate(2, java.sql.Date.valueOf(dataVenda));
+
             stmt.setDouble(3, venda.getValorSubtotal());
             stmt.setString(4, venda.getFkVendedorCPF());
             stmt.setString(5, venda.getFkProdutoCodigo());

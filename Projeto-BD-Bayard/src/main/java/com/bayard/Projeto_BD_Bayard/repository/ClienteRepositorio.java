@@ -2,10 +2,7 @@ package com.bayard.Projeto_BD_Bayard.repository;
 
 import com.bayard.Projeto_BD_Bayard.model.Cliente;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +17,7 @@ public class ClienteRepositorio {
             stmt.setString(1, cliente.getCpf());
             stmt.setString(2, cliente.getNome());
             stmt.setString(3, cliente.getInteresse());
-            stmt.setDate(4, java.sql.Date.valueOf(cliente.getDataNascimento()));
+            stmt.setDate(4, cliente.getDataNascimento() != null ? java.sql.Date.valueOf(cliente.getDataNascimento()) : null);
             stmt.setString(5, cliente.getCidade());
             stmt.setString(6, cliente.getBairro());
             stmt.setString(7, cliente.getRua());
@@ -50,7 +47,14 @@ public class ClienteRepositorio {
                 cliente.setCpf(rs.getString("cpf"));
                 cliente.setNome(rs.getString("nome"));
                 cliente.setInteresse(rs.getString("interesse"));
-                cliente.setDataNascimento(rs.getDate("data_nascimento").toLocalDate());
+
+                Date sqlDate = rs.getDate("data_nascimento");
+                if (sqlDate != null) {
+                    cliente.setDataNascimento(sqlDate.toLocalDate());
+                } else {
+                    cliente.setDataNascimento(null);
+                }
+
                 cliente.setCidade(rs.getString("cidade"));
                 cliente.setBairro(rs.getString("bairro"));
                 cliente.setRua(rs.getString("rua"));

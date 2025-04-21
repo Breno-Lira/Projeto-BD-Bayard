@@ -10,4 +10,5 @@ public class ProjetoBdBayardApplication {
 		SpringApplication.run(ProjetoBdBayardApplication.class, args);
 	}
 
+
 }
