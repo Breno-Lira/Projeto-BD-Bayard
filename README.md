@@ -11,6 +11,8 @@
 |-----------------------------|--------------------------------------------------------------------------------------|
 | *Banco de Dados*            | <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFPLXqRyw5PEl4ETnuzYuP5XhUI51sUdQzcg&s" alt="MySQL Logo" style="border-radius: 3px;"> |
 
+Link para o nosso Front-end: https://github.com/Breno-Lira/Projeto-BD-Bayard-Front
+
 # Team👩‍👩‍👦‍👦
  ### Breno Monteiro Rodrigues Lira
  ### Felipe Nunes Morgado
