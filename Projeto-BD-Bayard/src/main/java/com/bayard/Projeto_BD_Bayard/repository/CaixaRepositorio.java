@@ -2,6 +2,7 @@ package com.bayard.Projeto_BD_Bayard.repository;
 
 import com.bayard.Projeto_BD_Bayard.model.Caixa;
 import com.bayard.Projeto_BD_Bayard.model.Funcionario;
+import com.bayard.Projeto_BD_Bayard.model.Vendedor;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -139,6 +140,40 @@ public class CaixaRepositorio {
                 conn.setAutoCommit(true); // Restaura o modo de commit automático
             }
         }
+    }
 
+    public Caixa buscarCaixaPorCpf(String cpf) throws SQLException {
+        String sql = "SELECT c.cpf, c.login, c.senha, " +
+                "f.telefone, f.nome, f.vendedor_responsavel, f.chefia " +
+                "FROM Caixa c " +
+                "JOIN Funcionarios f ON c.cpf = f.cpf " +
+                "WHERE c.cpf = ?";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, cpf);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                Funcionario funcionario = new Funcionario(
+                        rs.getString("cpf"),
+                        rs.getString("telefone"),
+                        rs.getString("nome"),
+                        rs.getBoolean("vendedor_responsavel"),
+                        rs.getBoolean("chefia")
+                );
+                return new Caixa(
+                        funcionario,
+                        rs.getString("login"),
+                        rs.getString("senha")
+                );
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar caixa: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 }

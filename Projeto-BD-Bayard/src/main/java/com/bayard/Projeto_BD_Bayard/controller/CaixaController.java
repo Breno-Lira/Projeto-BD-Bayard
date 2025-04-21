@@ -1,6 +1,7 @@
 package com.bayard.Projeto_BD_Bayard.controller;
 
 import com.bayard.Projeto_BD_Bayard.model.Caixa;
+import com.bayard.Projeto_BD_Bayard.model.Vendedor;
 import com.bayard.Projeto_BD_Bayard.repository.CaixaRepositorio;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +39,20 @@ public class CaixaController {
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Erro ao listar todos os caixas: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("caixa/{cpf}")
+    public ResponseEntity<?> buscarCaixaPorCpf(@PathVariable String cpf) {
+        try {
+            Caixa caixa = caixaRepositorio.buscarCaixaPorCpf(cpf);
+            if (caixa == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Caixa não encontrado!");
+            }
+            return ResponseEntity.ok(caixa);
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao obter caixa por código: " + e.getMessage());
         }
     }
 
