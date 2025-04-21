@@ -1,5 +1,6 @@
 package com.bayard.Projeto_BD_Bayard.repository;
 
+import com.bayard.Projeto_BD_Bayard.model.Caixa;
 import com.bayard.Projeto_BD_Bayard.model.Estoquista;
 import com.bayard.Projeto_BD_Bayard.model.Funcionario;
 
@@ -139,6 +140,40 @@ public class EstoquistaRepositorio {
                 conn.setAutoCommit(true); // Restaura o modo de commit automático
             }
         }
+    }
 
+    public Estoquista buscarEstoquistaPorCpf(String cpf) throws SQLException {
+        String sql = "SELECT e.cpf, e.dataUltimoInventario, e.acessoEstoque, " +
+                "f.telefone, f.nome, f.vendedor_responsavel, f.chefia " +
+                "FROM Estoquista e " +
+                "JOIN Funcionarios f ON e.cpf = f.cpf " +
+                "WHERE e.cpf = ?";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, cpf);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                Funcionario funcionario = new Funcionario(
+                        rs.getString("cpf"),
+                        rs.getString("telefone"),
+                        rs.getString("nome"),
+                        rs.getBoolean("vendedor_responsavel"),
+                        rs.getBoolean("chefia")
+                );
+                return new Estoquista(
+                        funcionario,
+                        rs.getDate("dataUltimoInventario").toLocalDate(),
+                        rs.getString("acessoEstoque")
+                );
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar estoquista: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 }

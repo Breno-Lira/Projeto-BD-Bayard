@@ -1,5 +1,6 @@
 package com.bayard.Projeto_BD_Bayard.controller;
 
+import com.bayard.Projeto_BD_Bayard.model.Caixa;
 import com.bayard.Projeto_BD_Bayard.model.Estoquista;
 import com.bayard.Projeto_BD_Bayard.repository.EstoquistaRepositorio;
 import org.springframework.http.HttpStatus;
@@ -39,6 +40,20 @@ public class EstoquistaController {
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Erro ao listar todos os estoquistas: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("estoquista/{cpf}")
+    public ResponseEntity<?> buscarEstoquistaPorCpf(@PathVariable String cpf) {
+        try {
+            Estoquista estoquista = estoquistaRepositorio.buscarEstoquistaPorCpf(cpf);
+            if (estoquista == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Estoquista não encontrado!");
+            }
+            return ResponseEntity.ok(estoquista);
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao obter estoquista por código: " + e.getMessage());
         }
     }
 
