@@ -156,6 +156,58 @@ create table Repoe(
 	foreign key (codigo_produto) references Devolucao_cliente(codigo_produto)
 );
 
+-- 1. Inserir Funcionários
+INSERT INTO Funcionarios (cpf, telefone, nome, vendedor_responsavel, chefia)
+VALUES
+('11111111111', '11999999999', 'Carlos Silva', true, false),
+('22222222222', '11888888888', 'Ana Souza', false, true),
+('33333333333', '11777777777', 'Bruno Lima', false, false);
+
+-- 2. Inserir Estoquista
+INSERT INTO Estoquista (cpf, dataUltimoInventario, acessoEstoque)
+VALUES
+('22222222222', '2025-04-01', 'Estoque Geral');
+
+-- 3. Inserir Vendedor
+INSERT INTO Vendedor (cpf, numVenda)
+VALUES
+('11111111111', 0);
+
+-- 4. Inserir Caixa
+INSERT INTO Caixa (cpf, login, senha)
+VALUES
+('33333333333', 'caixa1', '123456');
+
+-- 5. Inserir Produto
+INSERT INTO Produto (codigo, nome, cor, preco)
+VALUES
+('P001', 'Camiseta Branca', 'Branco', 49.90),
+('P002', 'Tênis Esportivo', 'Preto', 199.90);
+
+-- 6. Inserir Vestuário
+INSERT INTO Vestuario (codigo, genero, tamanho, faixa_etaria)
+VALUES
+('P001', 'M', 'G', '18');
+
+-- 7. Inserir Calçados
+INSERT INTO Calcados (codigo, genero, tamanho, faixa_etaria)
+VALUES
+('P002', 'M', 42, '18');
+
+-- 8. Inserir Fornecedor
+INSERT INTO Fornecedor (cnpj, nome, transportaadora)
+VALUES
+('12345678000199', 'Fornecedor XYZ', 'TransXP');
+
+-- 9. Inserir Cliente
+INSERT INTO Cliente (cpf, nome, interesse, data_nascimento, cidade, bairro, rua, numero, cep, complemento)
+VALUES
+('44444444444', 'João Oliveira', 'Moda Casual', '1990-06-15', 'São Paulo', 'Centro', 'Rua das Flores', 123, '01010000', 'Apto 12');
+
+-- 10. Inserir Venda
+INSERT INTO Venda (idVenda, dataVenda, valorSubtotal, vendedor_cpf, codigo_produto, cliente_cpf)
+VALUES
+('V001', '2025-04-20', 49.90, '11111111111', 'P001', '44444444444');
 
 
 
