@@ -1,7 +1,6 @@
 package com.bayard.Projeto_BD_Bayard.repository;
 
-import com.bayard.Projeto_BD_Bayard.model.Funcionario;
-import com.bayard.Projeto_BD_Bayard.model.Vendedor;
+import com.bayard.Projeto_BD_Bayard.model.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -137,5 +136,38 @@ public class VendedorRepositorio {
             }
         }
 
+    }
+
+    public Vendedor buscarVendedorPorCpf(String cpf) throws SQLException {
+        String sql = "SELECT v.cpf, v.numVenda, " +
+                "f.telefone, f.nome, f.vendedor_responsavel, f.chefia " +
+                "FROM Vendedor v " +
+                "JOIN Funcionarios f ON v.cpf = f.cpf" + " WHERE v.cpf = ?";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, cpf);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                Funcionario funcionario = new Funcionario(
+                        rs.getString("cpf"),
+                        rs.getString("telefone"),
+                        rs.getString("nome"),
+                        rs.getBoolean("vendedor_responsavel"),
+                        rs.getBoolean("chefia")
+                );
+                return new Vendedor(
+                        funcionario,
+                        rs.getInt("numVenda")
+                );
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar vendedor: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 }

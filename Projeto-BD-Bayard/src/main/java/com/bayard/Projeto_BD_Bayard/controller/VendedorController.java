@@ -1,6 +1,7 @@
 package com.bayard.Projeto_BD_Bayard.controller;
 
 import com.bayard.Projeto_BD_Bayard.model.Vendedor;
+import com.bayard.Projeto_BD_Bayard.model.Vestuario;
 import com.bayard.Projeto_BD_Bayard.repository.VendedorRepositorio;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +39,20 @@ public class VendedorController {
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Erro ao listar todos os vendedores: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("vendedor/{cpf}")
+    public ResponseEntity<?> buscarVendedorPorCpf(@PathVariable String cpf) {
+        try {
+            Vendedor vendedor = vendedorRepositorio.buscarVendedorPorCpf(cpf);
+            if (vendedor == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vendedor não encontrado!");
+            }
+            return ResponseEntity.ok(vendedor);
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao obter vendedor por código: " + e.getMessage());
         }
     }
 
