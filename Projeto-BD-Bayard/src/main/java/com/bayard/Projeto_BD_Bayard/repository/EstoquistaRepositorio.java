@@ -4,10 +4,7 @@ import com.bayard.Projeto_BD_Bayard.model.Caixa;
 import com.bayard.Projeto_BD_Bayard.model.Estoquista;
 import com.bayard.Projeto_BD_Bayard.model.Funcionario;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,11 +64,20 @@ public class EstoquistaRepositorio {
                         rs.getBoolean("vendedor_responsavel"),
                         rs.getBoolean("chefia")
                 );
-                Estoquista estoquista = new Estoquista(
-                        funcionario,
-                        rs.getDate("dataUltimoInventario").toLocalDate(),
-                        rs.getString("acessoEstoque")
-                );
+
+
+                Estoquista estoquista = new Estoquista();
+                estoquista.setFuncionario(funcionario);
+
+                Date sqlDate = rs.getDate("dataUltimoInventario");
+                if (sqlDate != null) {
+                    estoquista.setDataUltimoInventario(rs.getDate("dataUltimoInventario").toLocalDate());
+                } else {
+                    estoquista.setDataUltimoInventario(null);
+                }
+                estoquista.setAcessoEstoque(rs.getString("acessoEstoque"));
+
+
                 estoquistas.add(estoquista);
             }
         }
