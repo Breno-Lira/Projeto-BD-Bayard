@@ -47,5 +47,4 @@ Windows:
 ```bash
 $env:DB_PASSWORD="senha"
 ```
-Ficar atento para campo "senha" ser a senha do seu banco!
 </details>
