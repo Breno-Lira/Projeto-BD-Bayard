@@ -9,8 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Funcionario {
     private String cpf;
-    private String telefone;
+    private String telefone1;
+    private String telefone2;
     private String nome;
     private boolean vendedorResponsavel;
     private boolean chefia;
+    private boolean ativo;
 }
