@@ -31,7 +31,7 @@ public class CalcadosController {
     }
 
     @GetMapping("calcados/{codigo}")
-    public ResponseEntity<?> obterCalcadoPorCodigo(@PathVariable("codigo") String codigo) {
+    public ResponseEntity<?> obterCalcadoPorCodigo(@PathVariable("codigo") int codigo) {
         try {
             Calcados calcado = calcadosRepositorio.obterPorCodigo(codigo);
             if (calcado == null) {
@@ -56,8 +56,8 @@ public class CalcadosController {
     }
 
     @PutMapping("calcados/editar/{codigo}")
-    public ResponseEntity<String> atualizarCalcado(@PathVariable("codigo") String codigo, @RequestBody Calcados calcado) {
-        if (!codigo.equals(calcado.getProduto().getCodigo())) {
+    public ResponseEntity<String> atualizarCalcado(@PathVariable("codigo") int codigo, @RequestBody Calcados calcado) {
+        if (codigo != (calcado.getProduto().getCodigo())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Código do calçado não corresponde ao código do produto.");
         }
 
@@ -71,7 +71,7 @@ public class CalcadosController {
     }
 
     @DeleteMapping("calcados/delete/{codigo}")
-    public ResponseEntity<String> excluirCalcado(@PathVariable String codigo) {
+    public ResponseEntity<String> excluirCalcado(@PathVariable int codigo) {
         try {
             calcadosRepositorio.excluirCalcado(codigo);
             return ResponseEntity.ok("Calçado excluído com sucesso!");

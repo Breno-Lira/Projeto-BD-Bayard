@@ -31,7 +31,7 @@ public class VestuarioController {
     }
 
     @GetMapping("vestuario/{codigo}")
-    public ResponseEntity<?> obterVestuarioPorCodigo(@PathVariable("codigo") String codigo) {
+    public ResponseEntity<?> obterVestuarioPorCodigo(@PathVariable("codigo") int codigo) {
         try {
             Vestuario vestuario = vestuarioRepositorio.obterPorCodigo(codigo);
             if (vestuario == null) {
@@ -58,8 +58,8 @@ public class VestuarioController {
 
     // Atualizar Vestuário
     @PutMapping("vestuario/editar/{codigo}")
-    public ResponseEntity<String> atualizarVestuario(@PathVariable("codigo") String codigo, @RequestBody Vestuario vestuario) {
-        if (!codigo.equals(vestuario.getProduto().getCodigo())) {
+    public ResponseEntity<String> atualizarVestuario(@PathVariable("codigo") int codigo, @RequestBody Vestuario vestuario) {
+        if (codigo != (vestuario.getProduto().getCodigo())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Código do vestuário não corresponde ao código do produto.");
         }
 
@@ -74,7 +74,7 @@ public class VestuarioController {
 
 
     @DeleteMapping("vestuario/delete/{codigo}")
-    public ResponseEntity<String> excluir(@PathVariable String codigo) {
+    public ResponseEntity<String> excluir(@PathVariable int codigo) {
         try {
             vestuarioRepositorio.excluirVestuario(codigo);
             return ResponseEntity.ok("Vestuario excluído com sucesso!");

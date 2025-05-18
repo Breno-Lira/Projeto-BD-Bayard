@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Vestuario {
     private Produto produto; // composição
-    private char genero;
+    private String genero;
     private String tamanho;
     private String faixaEtaria;
 }

@@ -12,15 +12,16 @@ import java.util.List;
 public class ProdutoRepositorio {
 
     public void inserirProduto(Produto produto) throws SQLException {
-        String sql = "INSERT INTO Produto (codigo, nome, cor, preco) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Produto (nome, cor_primaria, cor_secundaria, preco, qtdProduto) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = ConexaoBD.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, produto.getCodigo());
-            stmt.setString(2, produto.getNome());
-            stmt.setString(3, produto.getCor());
+            stmt.setString(1, produto.getNome());
+            stmt.setString(2, produto.getCor_primaria());
+            stmt.setString(3, produto.getCor_secundaria());
             stmt.setDouble(4, produto.getPreco());
+            stmt.setInt(5, produto.getQtdProduto());
 
             stmt.executeUpdate();
         }
@@ -36,10 +37,12 @@ public class ProdutoRepositorio {
 
             while (rs.next()) {
                 Produto produto = new Produto();
-                produto.setCodigo(rs.getString("codigo"));
+                produto.setCodigo(rs.getInt("codigo"));
                 produto.setNome(rs.getString("nome"));
-                produto.setCor(rs.getString("cor"));
+                produto.setCor_primaria(rs.getString("cor_primaria"));
+                produto.setCor_secundaria(rs.getString("cor_secundaria"));
                 produto.setPreco(rs.getDouble("preco"));
+                produto.setQtdProduto(rs.getInt("qtdProduto"));
 
                 produtos.add(produto);
             }
@@ -61,10 +64,12 @@ public class ProdutoRepositorio {
 
             while (rs.next()) {
                 Produto produto = new Produto();
-                produto.setCodigo(rs.getString("codigo"));
+                produto.setCodigo(rs.getInt("codigo"));
                 produto.setNome(rs.getString("nome"));
-                produto.setCor(rs.getString("cor"));
+                produto.setCor_primaria(rs.getString("cor_primaria"));
+                produto.setCor_secundaria(rs.getString("cor_secundaria"));
                 produto.setPreco(rs.getDouble("preco"));
+                produto.setQtdProduto(rs.getInt("qtdProduto"));
 
                 produtos.add(produto);
             }
@@ -76,13 +81,13 @@ public class ProdutoRepositorio {
         return produtos;
     }
 
-    public void deletarProduto(String codigo) throws SQLException{
+    public void deletarProduto(int codigo) throws SQLException{
         String sql = "DELETE FROM Produto WHERE codigo = ?";
 
         try (Connection conn = ConexaoBD.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, codigo);
+            stmt.setInt(1, codigo);
             stmt.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Erro ao deletar produto: " + e.getMessage());
@@ -91,17 +96,18 @@ public class ProdutoRepositorio {
     }
 
     public void atualizarProduto(Produto produto) throws SQLException {
-        String sql = "UPDATE Produto SET codigo = ?, nome = ?, cor = ?, preco = ?" +
+        String sql = "UPDATE Produto SET nome = ?, cor_primaria = ?, cor_secundaria = ?, preco = ?, qtdProduto = ? " +
                 "WHERE codigo = ?";
 
         try (Connection conn = ConexaoBD.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, produto.getCodigo());
-            stmt.setString(2, produto.getNome());
-            stmt.setString(3, produto.getCor());
+            stmt.setString(1, produto.getNome());
+            stmt.setString(2, produto.getCor_primaria());
+            stmt.setString(3, produto.getCor_secundaria());
             stmt.setDouble(4, produto.getPreco());
-            stmt.setString(5, produto.getCodigo());
+            stmt.setInt(5, produto.getQtdProduto());
+            stmt.setInt(6, produto.getCodigo());
 
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -110,21 +116,23 @@ public class ProdutoRepositorio {
         }
     }
 
-    public Produto buscarProdutoPorCodigo(String codigo) throws SQLException {
+    public Produto buscarProdutoPorCodigo(int codigo) throws SQLException {
         String sql = "SELECT * FROM Produto WHERE codigo = ?";
 
         try (Connection conn = ConexaoBD.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, codigo);
+            stmt.setInt(1, codigo);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
                 Produto produto = new Produto();
-                produto.setCodigo(rs.getString("codigo"));
+                produto.setCodigo(rs.getInt("codigo"));
                 produto.setNome(rs.getString("nome"));
-                produto.setCor(rs.getString("cor"));
+                produto.setCor_primaria(rs.getString("cor_primaria"));
+                produto.setCor_secundaria(rs.getString("cor_secundaria"));
                 produto.setPreco(rs.getDouble("preco"));
+                produto.setQtdProduto(rs.getInt("qtdProduto"));
                 return produto;
             } else {
                 return null;

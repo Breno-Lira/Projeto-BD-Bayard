@@ -8,8 +8,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Produto {
-    private String codigo;
+    private int codigo;
     private String nome;
-    private String cor;
+    private String cor_primaria;
+    private String cor_secundaria;
     private double preco;
+    private int qtdProduto;
 }

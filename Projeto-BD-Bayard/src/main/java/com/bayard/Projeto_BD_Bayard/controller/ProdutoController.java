@@ -50,7 +50,7 @@ public class ProdutoController {
     }
 
     @DeleteMapping("produtos/delete/{codigo}")
-    public ResponseEntity<String> deletarProduto(@PathVariable String codigo) {
+    public ResponseEntity<String> deletarProduto(@PathVariable int codigo) {
         try {
             produtoRepositorio.deletarProduto(codigo);
             return ResponseEntity.ok("Produto excluído com sucesso!");
@@ -61,7 +61,7 @@ public class ProdutoController {
     }
 
     @PutMapping("produtos/editar/{codigo}")
-    public ResponseEntity<String> atualizarProduto(@PathVariable String codigo, @RequestBody Produto produto) {
+    public ResponseEntity<String> atualizarProduto(@PathVariable int codigo, @RequestBody Produto produto) {
         try {
             produto.setCodigo(codigo); // garante que vai usar o CPF certo
             produtoRepositorio.atualizarProduto(produto);
@@ -73,7 +73,7 @@ public class ProdutoController {
     }
 
     @GetMapping("/produtos/{codigo}")
-    public ResponseEntity<?> buscarProdutoPorCodigo(@PathVariable String codigo) {
+    public ResponseEntity<?> buscarProdutoPorCodigo(@PathVariable int codigo) {
         try {
             Produto produto = produtoRepositorio.buscarProdutoPorCodigo(codigo);
             if (produto != null) {

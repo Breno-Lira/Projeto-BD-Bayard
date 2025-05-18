@@ -13,7 +13,7 @@ public class CalcadosRepositorio {
 
     public List<Calcados> listarTodos() throws SQLException {
         List<Calcados> calcadosList = new ArrayList<>();
-        String sql = "SELECT c.codigo, c.genero, c.tamanho, c.faixa_etaria, p.nome, p.cor, p.preco " +
+        String sql = "SELECT c.codigo, c.genero, c.tamanho, c.faixa_etaria, p.nome, p.cor_primaria, p.cor_secundaria, p.preco, p.qtdProduto " +
                 "FROM Calcados c " +
                 "JOIN Produto p ON c.codigo = p.codigo";
 
@@ -23,14 +23,16 @@ public class CalcadosRepositorio {
 
             while (rs.next()) {
                 Produto produto = new Produto(
-                        rs.getString("codigo"),
+                        rs.getInt("codigo"),
                         rs.getString("nome"),
-                        rs.getString("cor"),
-                        rs.getDouble("preco")
+                        rs.getString("cor_primaria"),
+                        rs.getString("cor_secundaria"),
+                        rs.getDouble("preco"),
+                        rs.getInt("qtdProduto")
                 );
                 Calcados calcado = new Calcados();
                 calcado.setProduto(produto);
-                calcado.setGenero(rs.getString("genero").charAt(0));
+                calcado.setGenero(rs.getString("genero"));
                 calcado.setTamanho(rs.getInt("tamanho"));
                 calcado.setFaixaEtaria(rs.getString("faixa_etaria"));
 
@@ -40,8 +42,8 @@ public class CalcadosRepositorio {
         return calcadosList;
     }
 
-    public Calcados obterPorCodigo(String codigo) throws SQLException {
-        String sql = "SELECT c.codigo, c.genero, c.tamanho, c.faixa_etaria, p.nome, p.cor, p.preco " +
+    public Calcados obterPorCodigo(int codigo) throws SQLException {
+        String sql = "SELECT c.codigo, c.genero, c.tamanho, c.faixa_etaria, p.nome, p.cor_primaria, p.cor_secundaria, p.preco, p.qtdProduto " +
                 "FROM Calcados c " +
                 "JOIN Produto p ON c.codigo = p.codigo " +
                 "WHERE c.codigo = ?";
@@ -49,18 +51,20 @@ public class CalcadosRepositorio {
         try (Connection conn = ConexaoBD.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, codigo);
+            stmt.setInt(1, codigo);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     Produto produto = new Produto(
-                            rs.getString("codigo"),
+                            rs.getInt("codigo"),
                             rs.getString("nome"),
-                            rs.getString("cor"),
-                            rs.getDouble("preco")
+                            rs.getString("cor_primaria"),
+                            rs.getString("cor_secundaria"),
+                            rs.getDouble("preco"),
+                            rs.getInt("qtdProduto")
                     );
                     Calcados calcado = new Calcados();
                     calcado.setProduto(produto);
-                    calcado.setGenero(rs.getString("genero").charAt(0));
+                    calcado.setGenero(rs.getString("genero"));
                     calcado.setTamanho(rs.getInt("tamanho"));
                     calcado.setFaixaEtaria(rs.getString("faixa_etaria"));
                     return calcado;
@@ -71,7 +75,8 @@ public class CalcadosRepositorio {
     }
 
     public void inserirCalcado(Calcados calcado) throws SQLException {
-        String sqlProduto = "INSERT INTO Produto (codigo, nome, cor, preco) VALUES (?, ?, ?, ?)";
+        String sqlProduto = "INSERT INTO Produto (nome, cor_primaria, cor_secundaria, preco, qtdProduto) VALUES (?, ?, ?, ?, ?)";
+        String sqlConsulta = "SELECT max(p.codigo) as produto_codigo from produto p";
         String sqlCalcado = "INSERT INTO Calcados (codigo, genero, tamanho, faixa_etaria) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = ConexaoBD.conectar()) {
@@ -79,16 +84,26 @@ public class CalcadosRepositorio {
 
             try (
                     PreparedStatement stmtProduto = conn.prepareStatement(sqlProduto);
+                    PreparedStatement stmtConsulta = conn.prepareStatement(sqlConsulta);
                     PreparedStatement stmtCalcado = conn.prepareStatement(sqlCalcado)
             ) {
-                stmtProduto.setString(1, calcado.getProduto().getCodigo());
-                stmtProduto.setString(2, calcado.getProduto().getNome());
-                stmtProduto.setString(3, calcado.getProduto().getCor());
+                stmtProduto.setString(1, calcado.getProduto().getNome());
+                stmtProduto.setString(2, calcado.getProduto().getCor_primaria());
+                stmtProduto.setString(3, calcado.getProduto().getCor_secundaria());
                 stmtProduto.setDouble(4, calcado.getProduto().getPreco());
+                stmtProduto.setInt(5, calcado.getProduto().getQtdProduto());
                 stmtProduto.executeUpdate();
 
-                stmtCalcado.setString(1, calcado.getProduto().getCodigo());
-                stmtCalcado.setString(2, String.valueOf(calcado.getGenero()));
+                int codigo = 0;
+
+                try (ResultSet rs = stmtConsulta.executeQuery()) {
+                    if (rs.next()) {
+                        codigo = rs.getInt("produto_codigo");
+                    }
+                }
+
+                stmtCalcado.setInt(1, codigo);
+                stmtCalcado.setString(2, calcado.getGenero());
                 stmtCalcado.setInt(3, calcado.getTamanho());
                 stmtCalcado.setString(4, calcado.getFaixaEtaria());
                 stmtCalcado.executeUpdate();
@@ -104,7 +119,7 @@ public class CalcadosRepositorio {
     }
 
     public void atualizarCalcado(Calcados calcado) throws SQLException {
-        String sqlProduto = "UPDATE Produto SET nome = ?, cor = ?, preco = ? WHERE codigo = ?";
+        String sqlProduto = "UPDATE Produto SET nome = ?, cor_primaria = ?, cor_secundaria = ?, preco = ?, qtdProduto = ? WHERE codigo = ?";
         String sqlCalcado = "UPDATE Calcados SET genero = ?, tamanho = ?, faixa_etaria = ? WHERE codigo = ?";
 
         try (Connection conn = ConexaoBD.conectar()) {
@@ -115,15 +130,17 @@ public class CalcadosRepositorio {
                     PreparedStatement stmtCalcado = conn.prepareStatement(sqlCalcado)
             ) {
                 stmtProduto.setString(1, calcado.getProduto().getNome());
-                stmtProduto.setString(2, calcado.getProduto().getCor());
-                stmtProduto.setDouble(3, calcado.getProduto().getPreco());
-                stmtProduto.setString(4, calcado.getProduto().getCodigo());
+                stmtProduto.setString(2, calcado.getProduto().getCor_primaria());
+                stmtProduto.setString(3, calcado.getProduto().getCor_secundaria());
+                stmtProduto.setDouble(4, calcado.getProduto().getPreco());
+                stmtProduto.setInt(5, calcado.getProduto().getQtdProduto());
+                stmtProduto.setInt(6, calcado.getProduto().getCodigo());
                 stmtProduto.executeUpdate();
 
-                stmtCalcado.setString(1, String.valueOf(calcado.getGenero()));
+                stmtCalcado.setString(1, calcado.getGenero());
                 stmtCalcado.setInt(2, calcado.getTamanho());
                 stmtCalcado.setString(3, calcado.getFaixaEtaria());
-                stmtCalcado.setString(4, calcado.getProduto().getCodigo());
+                stmtCalcado.setInt(4, calcado.getProduto().getCodigo());
                 stmtCalcado.executeUpdate();
 
                 conn.commit();
@@ -136,7 +153,7 @@ public class CalcadosRepositorio {
         }
     }
 
-    public void excluirCalcado(String codigo) throws SQLException {
+    public void excluirCalcado(int codigo) throws SQLException {
         String sqlCalcado = "DELETE FROM Calcados WHERE codigo = ?";
         String sqlProduto = "DELETE FROM Produto WHERE codigo = ?";
 
@@ -147,10 +164,10 @@ public class CalcadosRepositorio {
                     PreparedStatement stmtCalcado = conn.prepareStatement(sqlCalcado);
                     PreparedStatement stmtProduto = conn.prepareStatement(sqlProduto)
             ) {
-                stmtCalcado.setString(1, codigo);
+                stmtCalcado.setInt(1, codigo);
                 stmtCalcado.executeUpdate();
 
-                stmtProduto.setString(1, codigo);
+                stmtProduto.setInt(1, codigo);
                 stmtProduto.executeUpdate();
 
                 conn.commit();

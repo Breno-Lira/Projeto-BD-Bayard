@@ -15,7 +15,7 @@ public class VestuarioRepositorio {
 
     public List<Vestuario> listarTodos() throws SQLException {
         List<Vestuario> vestuarios = new ArrayList<>();
-        String sql = "SELECT v.codigo, v.genero, v.tamanho, v.faixa_etaria, p.nome, p.cor, p.preco " +
+        String sql = "SELECT v.codigo, v.genero, v.tamanho, v.faixa_etaria, p.nome, p.cor_primaria, p.cor_secundaria, p.preco, p.qtdProduto " +
                 "FROM Vestuario v " +
                 "JOIN Produto p ON v.codigo = p.codigo";
 
@@ -25,14 +25,16 @@ public class VestuarioRepositorio {
 
             while (rs.next()) {
                 Produto produto = new Produto(
-                        rs.getString("codigo"),
+                        rs.getInt("codigo"),
                         rs.getString("nome"),
-                        rs.getString("cor"),
-                        rs.getDouble("preco")
+                        rs.getString("cor_primaria"),
+                        rs.getString("cor_secundaria"),
+                        rs.getDouble("preco"),
+                        rs.getInt("qtdProduto")
                 );
                 Vestuario vestuario = new Vestuario(
                         produto,
-                        rs.getString("genero").charAt(0),
+                        rs.getString("genero"),
                         rs.getString("tamanho"),
                         rs.getString("faixa_etaria")
                 );
@@ -43,26 +45,28 @@ public class VestuarioRepositorio {
     }
 
     // Obter um Vestuário por Código
-    public Vestuario obterPorCodigo(String codigo) throws SQLException {
-        String sql = "SELECT v.codigo, v.genero, v.tamanho, v.faixa_etaria, p.nome, p.cor, p.preco " +
+    public Vestuario obterPorCodigo(int codigo) throws SQLException {
+        String sql = "SELECT v.codigo, v.genero, v.tamanho, v.faixa_etaria, p.nome, p.cor_primaria, p.cor_secundaria, p.preco, p.qtdProduto " +
                 "FROM Vestuario v " +
                 "JOIN Produto p ON v.codigo = p.codigo " +
                 "WHERE v.codigo = ?";
         try (Connection conn = ConexaoBD.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, codigo);
+            stmt.setInt(1, codigo);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     Produto produto = new Produto(
-                            rs.getString("codigo"),
+                            rs.getInt("codigo"),
                             rs.getString("nome"),
-                            rs.getString("cor"),
-                            rs.getDouble("preco")
+                            rs.getString("cor_primaria"),
+                            rs.getString("cor_secundaria"),
+                            rs.getDouble("preco"),
+                            rs.getInt("qtdProduto")
                     );
                     return new Vestuario(
                             produto,
-                            rs.getString("genero").charAt(0),
+                            rs.getString("genero"),
                             rs.getString("tamanho"),
                             rs.getString("faixa_etaria")
                     );
@@ -74,7 +78,8 @@ public class VestuarioRepositorio {
 
 
     public void inserirVestuario(Vestuario vestuario) throws SQLException {
-        String sqlProduto = "INSERT INTO Produto (codigo, nome, cor, preco) VALUES (?, ?, ?, ?)";
+        String sqlProduto = "INSERT INTO Produto (nome, cor_primaria, cor_secundaria, preco, qtdProduto) VALUES (?, ?, ?, ?, ?)";
+        String sqlConsulta = "SELECT max(p.codigo) as produto_codigo from produto p";
         String sqlVestuario = "INSERT INTO Vestuario (codigo, genero, tamanho, faixa_etaria) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = ConexaoBD.conectar()) {
@@ -82,18 +87,28 @@ public class VestuarioRepositorio {
 
             try (
                     PreparedStatement stmtProduto = conn.prepareStatement(sqlProduto);
+                    PreparedStatement stmtConsulta = conn.prepareStatement(sqlConsulta);
                     PreparedStatement stmtVestuario = conn.prepareStatement(sqlVestuario)
             ) {
                 // Inserir Produto
-                stmtProduto.setString(1, vestuario.getProduto().getCodigo());
-                stmtProduto.setString(2, vestuario.getProduto().getNome());
-                stmtProduto.setString(3, vestuario.getProduto().getCor());
+                stmtProduto.setString(1, vestuario.getProduto().getNome());
+                stmtProduto.setString(2, vestuario.getProduto().getCor_primaria());
+                stmtProduto.setString(3, vestuario.getProduto().getCor_secundaria());
                 stmtProduto.setDouble(4, vestuario.getProduto().getPreco());
+                stmtProduto.setInt(5, vestuario.getProduto().getQtdProduto());
                 stmtProduto.executeUpdate();
 
+                int codigo = 0;
+
+                try (ResultSet rs = stmtConsulta.executeQuery()) {
+                    if (rs.next()) {
+                        codigo = rs.getInt("produto_codigo");
+                    }
+                }
+
                 // Inserir Vestuário
-                stmtVestuario.setString(1, vestuario.getProduto().getCodigo());
-                stmtVestuario.setString(2, String.valueOf(vestuario.getGenero()));
+                stmtVestuario.setInt(1, codigo);
+                stmtVestuario.setString(2, vestuario.getGenero());
                 stmtVestuario.setString(3, vestuario.getTamanho());
                 stmtVestuario.setString(4, vestuario.getFaixaEtaria());
                 stmtVestuario.executeUpdate();
@@ -110,7 +125,7 @@ public class VestuarioRepositorio {
 
     // Atualizar Produto e Vestuário
     public void atualizarVestuario(Vestuario vestuario) throws SQLException {
-        String sqlProduto = "UPDATE Produto SET nome = ?, cor = ?, preco = ? WHERE codigo = ?";
+        String sqlProduto = "UPDATE Produto SET nome = ?, cor_primaria = ?, cor_secundaria = ?, preco = ?, qtdProduto = ? WHERE codigo = ?";
         String sqlVestuario = "UPDATE Vestuario SET genero = ?, tamanho = ?, faixa_etaria = ? WHERE codigo = ?";
 
         try (Connection conn = ConexaoBD.conectar()) {
@@ -122,16 +137,18 @@ public class VestuarioRepositorio {
             ) {
                 // Atualizar Produto
                 stmtProduto.setString(1, vestuario.getProduto().getNome());
-                stmtProduto.setString(2, vestuario.getProduto().getCor());
-                stmtProduto.setDouble(3, vestuario.getProduto().getPreco());
-                stmtProduto.setString(4, vestuario.getProduto().getCodigo());
+                stmtProduto.setString(2, vestuario.getProduto().getCor_primaria());
+                stmtProduto.setString(3, vestuario.getProduto().getCor_secundaria());
+                stmtProduto.setDouble(4, vestuario.getProduto().getPreco());
+                stmtProduto.setInt(5, vestuario.getProduto().getQtdProduto());
+                stmtProduto.setInt(6, vestuario.getProduto().getCodigo());
                 stmtProduto.executeUpdate();
 
                 // Atualizar Vestuário
-                stmtVestuario.setString(1, String.valueOf(vestuario.getGenero()));
+                stmtVestuario.setString(1, vestuario.getGenero());
                 stmtVestuario.setString(2, vestuario.getTamanho());
                 stmtVestuario.setString(3, vestuario.getFaixaEtaria());
-                stmtVestuario.setString(4, vestuario.getProduto().getCodigo());
+                stmtVestuario.setInt(4, vestuario.getProduto().getCodigo());
                 stmtVestuario.executeUpdate();
 
                 conn.commit();
@@ -146,7 +163,7 @@ public class VestuarioRepositorio {
 
 
     // Excluir Produto e Vestuário
-    public void excluirVestuario(String codigo) throws SQLException {
+    public void excluirVestuario(int codigo) throws SQLException {
         String sqlVestuario = "DELETE FROM Vestuario WHERE codigo = ?";
         String sqlProduto = "DELETE FROM Produto WHERE codigo = ?";
 
@@ -158,11 +175,11 @@ public class VestuarioRepositorio {
                     PreparedStatement stmtProduto = conn.prepareStatement(sqlProduto)
             ) {
                 // Excluir Vestuário
-                stmtVestuario.setString(1, codigo);
+                stmtVestuario.setInt(1, codigo);
                 stmtVestuario.executeUpdate();
 
                 // Excluir Produto
-                stmtProduto.setString(1, codigo);
+                stmtProduto.setInt(1, codigo);
                 stmtProduto.executeUpdate();
 
                 conn.commit(); // Confirma a transação
