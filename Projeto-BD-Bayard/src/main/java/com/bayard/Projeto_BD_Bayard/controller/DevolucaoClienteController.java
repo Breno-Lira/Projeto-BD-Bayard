@@ -1,7 +1,6 @@
 package com.bayard.Projeto_BD_Bayard.controller;
 
 import com.bayard.Projeto_BD_Bayard.model.DevolucaoCliente;
-import com.bayard.Projeto_BD_Bayard.model.DevolucaoFornecedor;
 import com.bayard.Projeto_BD_Bayard.repository.DevolucaoClienteRepositorio;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +24,7 @@ public class DevolucaoClienteController {
             List<DevolucaoCliente> devolucaoClientes = devolucaoClienteRepositorio.listarDevolucoesClientes();
             return ResponseEntity.ok(devolucaoClientes);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -41,8 +39,8 @@ public class DevolucaoClienteController {
         }
     }
 
-    @DeleteMapping("devolucaoClientes/delete/{id_dev}")
-    public ResponseEntity<String> deletarDevolucao(@PathVariable String id_dev) {
+    @DeleteMapping("/devolucaoClientes/delete/{id_dev}")
+    public ResponseEntity<String> deletarDevolucao(@PathVariable int id_dev) {
         try {
             devolucaoClienteRepositorio.deletarDevolucaoPorId(id_dev);
             return ResponseEntity.ok("Devolução do cliente excluída com sucesso!");
@@ -52,15 +50,15 @@ public class DevolucaoClienteController {
         }
     }
 
-    @PutMapping("devolucaoClientes/editar/{id_dev}")
-    public ResponseEntity<String> atualizarDevolucaoCliente(@PathVariable String id_dev, @RequestBody DevolucaoCliente devolucaoCliente) {
+    @PutMapping("/devolucaoClientes/editar/{id_dev}")
+    public ResponseEntity<String> atualizarDevolucaoCliente(@PathVariable int id_dev, @RequestBody DevolucaoCliente devolucaoCliente) {
         try {
             devolucaoCliente.setIdDevolucao(id_dev);
             devolucaoClienteRepositorio.atualizarDevolucaoCliente(devolucaoCliente);
-            return ResponseEntity.ok("Devolucao cliente atualizada com sucesso!");
+            return ResponseEntity.ok("Devolução cliente atualizada com sucesso!");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro ao atualizar devolucao cliente: " + e.getMessage());
+                    .body("Erro ao atualizar devolução cliente: " + e.getMessage());
         }
     }
 }

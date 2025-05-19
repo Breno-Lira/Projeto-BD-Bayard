@@ -12,17 +12,17 @@ import java.util.List;
 public class DevolucaoClienteRepositorio {
 
     public void inserirDevolucaoCliente(DevolucaoCliente devolucaoCliente) throws SQLException {
-        String sql = "INSERT INTO Devolucao_cliente (id_dev, codigo_produto, cliente_cpf, vendedor_cpf, dataDevolucao) " +
+        String sql = "INSERT INTO Devolucao_cliente (codigo_produto, cliente_cpf, vendedor_cpf, devData, qtdProduto) " +
                 "VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = ConexaoBD.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, devolucaoCliente.getIdDevolucao());
-            stmt.setString(2, devolucaoCliente.getFkProdutoCodigo());
-            stmt.setString(3, devolucaoCliente.getFkClienteCPF());
-            stmt.setString(4, devolucaoCliente.getFkVendedorCPF());
-            stmt.setDate(5, java.sql.Date.valueOf(devolucaoCliente.getDataDevolucao()));
+            stmt.setInt(1, devolucaoCliente.getFkProdutoCodigo());
+            stmt.setString(2, devolucaoCliente.getFkClienteCPF());
+            stmt.setString(3, devolucaoCliente.getFkVendedorCPF());
+            stmt.setDate(4, java.sql.Date.valueOf(devolucaoCliente.getDataDevolucao()));
+            stmt.setInt(5, devolucaoCliente.getQtdProduto());
 
             stmt.executeUpdate();
         }
@@ -38,11 +38,12 @@ public class DevolucaoClienteRepositorio {
 
             while (rs.next()) {
                 DevolucaoCliente devolucaoCliente = new DevolucaoCliente();
-                devolucaoCliente.setIdDevolucao(rs.getString("id_dev"));
-                devolucaoCliente.setFkProdutoCodigo(rs.getString("codigo_produto"));
+                devolucaoCliente.setIdDevolucao(rs.getInt("id_dev_cliente"));
+                devolucaoCliente.setFkProdutoCodigo(rs.getInt("codigo_produto"));
                 devolucaoCliente.setFkClienteCPF(rs.getString("cliente_cpf"));
                 devolucaoCliente.setFkVendedorCPF(rs.getString("vendedor_cpf"));
-                devolucaoCliente.setDataDevolucao(rs.getDate("dataDevolucao").toLocalDate());
+                devolucaoCliente.setDataDevolucao(rs.getDate("devData").toLocalDate());
+                devolucaoCliente.setQtdProduto(rs.getInt("qtdProduto"));
 
                 devolucaoClientes.add(devolucaoCliente);
             }
@@ -55,13 +56,13 @@ public class DevolucaoClienteRepositorio {
         return devolucaoClientes;
     }
 
-    public void deletarDevolucaoPorId(String id_dev) throws SQLException {
-        String sql = "DELETE FROM Devolucao_cliente WHERE id_dev = ?";
+    public void deletarDevolucaoPorId(int idDevCliente) throws SQLException {
+        String sql = "DELETE FROM Devolucao_cliente WHERE id_dev_cliente = ?";
 
         try (Connection conn = ConexaoBD.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, id_dev);
+            stmt.setInt(1, idDevCliente);
             stmt.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Erro ao deletar devolução cliente: " + e.getMessage());
@@ -70,17 +71,18 @@ public class DevolucaoClienteRepositorio {
     }
 
     public void atualizarDevolucaoCliente(DevolucaoCliente devolucaoCliente) throws SQLException {
-        String sql = "UPDATE Devolucao_cliente SET codigo_produto = ?, cliente_cpf = ?, vendedor_cpf = ?, dataDevolucao = ? " +
-                "WHERE id_dev = ?";
+        String sql = "UPDATE Devolucao_cliente SET codigo_produto = ?, cliente_cpf = ?, vendedor_cpf = ?, devData = ?, qtdProduto = ? " +
+                "WHERE id_dev_cliente = ?";
 
         try (Connection conn = ConexaoBD.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, devolucaoCliente.getFkProdutoCodigo());
+            stmt.setInt(1, devolucaoCliente.getFkProdutoCodigo());
             stmt.setString(2, devolucaoCliente.getFkClienteCPF());
             stmt.setString(3, devolucaoCliente.getFkVendedorCPF());
             stmt.setDate(4, java.sql.Date.valueOf(devolucaoCliente.getDataDevolucao()));
-            stmt.setString(5, devolucaoCliente.getIdDevolucao());
+            stmt.setInt(5, devolucaoCliente.getQtdProduto());
+            stmt.setInt(6, devolucaoCliente.getIdDevolucao());
 
             stmt.executeUpdate();
         } catch (SQLException e) {

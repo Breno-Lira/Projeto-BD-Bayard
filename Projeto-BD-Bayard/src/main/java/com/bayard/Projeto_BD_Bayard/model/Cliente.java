@@ -12,7 +12,8 @@ import java.time.LocalDate;
 public class Cliente {
     private String cpf;
     private String nome;
-    private String interesse;
+    private String interesse1;
+    private String interesse2;
     private LocalDate dataNascimento;
     private String cidade;
     private String bairro;
