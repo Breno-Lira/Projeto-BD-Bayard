@@ -10,9 +10,10 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DevolucaoFornecedor {
-    private String idDevolucao;
-    private String fkEstoquistaCPF;
-    private String fkFornecedorCNPJ;
-    private String fkProdutoCodigo;
-    private LocalDate dataDevolucao;
+    private int idDevFornecedor;
+    private String estoquistaCpf;
+    private String fornecedorCnpj;
+    private int codigoProduto;
+    private LocalDate devData;
+    private int qtdProduto;
 }

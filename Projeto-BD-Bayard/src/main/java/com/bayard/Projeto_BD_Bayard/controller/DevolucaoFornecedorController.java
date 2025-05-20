@@ -12,27 +12,26 @@ import java.util.List;
 @CrossOrigin("http://localhost:3000")
 public class DevolucaoFornecedorController {
 
-    private final DevolucaoFornecedorRepositorio devolucaoFornecedorRepositorio;
+    private final DevolucaoFornecedorRepositorio repositorio;
 
-    public DevolucaoFornecedorController(){
-        this.devolucaoFornecedorRepositorio = new DevolucaoFornecedorRepositorio();
+    public DevolucaoFornecedorController() {
+        this.repositorio = new DevolucaoFornecedorRepositorio();
     }
 
-    @GetMapping("/devolucaoFornecedores")
-    public ResponseEntity<List<DevolucaoFornecedor>> listarDevolucoesFornecedores() {
+    @GetMapping("devolucaoFornecedores")
+    public ResponseEntity<List<DevolucaoFornecedor>> listar() {
         try {
-            List<DevolucaoFornecedor> devolucaoFornecedores = devolucaoFornecedorRepositorio.listarDevolucoesFornecedores();
-            return ResponseEntity.ok(devolucaoFornecedores);
+            List<DevolucaoFornecedor> lista = repositorio.listarDevolucoesFornecedores();
+            return ResponseEntity.ok(lista);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @PostMapping("/devolucaoFornecedores/add")
-    public ResponseEntity<String> inserirDevolucaoFornecedor(@RequestBody DevolucaoFornecedor devolucaoFornecedor) {
+    public ResponseEntity<String> inserir(@RequestBody DevolucaoFornecedor devolucao) {
         try {
-            devolucaoFornecedorRepositorio.inserirDevolucaoFornecedor(devolucaoFornecedor);
+            repositorio.inserirDevolucaoFornecedor(devolucao);
             return ResponseEntity.status(HttpStatus.CREATED).body("Devolução inserida com sucesso!");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -40,10 +39,10 @@ public class DevolucaoFornecedorController {
         }
     }
 
-    @DeleteMapping("devolucaoFornecedores/delete/{id_dev_fornecedor}")
-    public ResponseEntity<String> deletarDevolucao(@PathVariable String id_dev_fornecedor) {
+    @DeleteMapping("/devolucaoFornecedores/delete/{id}")
+    public ResponseEntity<String> deletar(@PathVariable int id) {
         try {
-            devolucaoFornecedorRepositorio.deletarDevolucaoPorId(id_dev_fornecedor);
+            repositorio.deletarDevolucaoPorId(id);
             return ResponseEntity.ok("Devolução do fornecedor excluída com sucesso!");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -51,15 +50,15 @@ public class DevolucaoFornecedorController {
         }
     }
 
-    @PutMapping("devolucaoFornecedores/editar/{id_dev_fornecedor}")
-    public ResponseEntity<String> atualizarDevolucaoFornecedor(@PathVariable String id_dev_fornecedor, @RequestBody DevolucaoFornecedor devolucaoFornecedor) {
+    @PutMapping("/devolucaoFornecedores/editar/{id}")
+    public ResponseEntity<String> atualizar(@PathVariable int id, @RequestBody DevolucaoFornecedor devolucao) {
         try {
-            devolucaoFornecedor.setIdDevolucao(id_dev_fornecedor);
-            devolucaoFornecedorRepositorio.atualizarDevolucaoFornecedor(devolucaoFornecedor);
-            return ResponseEntity.ok("Devolucao fornecedor atualizada com sucesso!");
+            devolucao.setIdDevFornecedor(id);
+            repositorio.atualizarDevolucaoFornecedor(devolucao);
+            return ResponseEntity.ok("Devolução fornecedor atualizada com sucesso!");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro ao atualizar devolucao fornecedor: " + e.getMessage());
+                    .body("Erro ao atualizar devolução fornecedor: " + e.getMessage());
         }
     }
 }
