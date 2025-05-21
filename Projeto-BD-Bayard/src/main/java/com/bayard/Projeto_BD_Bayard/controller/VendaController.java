@@ -52,7 +52,7 @@ public class VendaController {
     }
 
     @DeleteMapping("vendas/delete/{idVenda}")
-    public ResponseEntity<String> deletarVenda(@PathVariable String idVenda) {
+    public ResponseEntity<String> deletarVenda(@PathVariable int idVenda) {
         try {
             vendaRepositorio.deletarVenda(idVenda);
             return ResponseEntity.ok("Venda excluída com sucesso!");
