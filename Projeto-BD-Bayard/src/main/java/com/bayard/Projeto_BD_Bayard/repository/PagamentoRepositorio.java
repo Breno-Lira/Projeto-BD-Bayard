@@ -44,7 +44,7 @@ public class PagamentoRepositorio {
                 pagamento.setCaixa_cpf(rs.getString("caixa_cpf"));
                 pagamento.setIdVenda(rs.getInt("idVenda"));
                 pagamento.setValorTotal(rs.getDouble("valorTotal"));
-                pagamento.setValorTotal(rs.getDouble("desconto"));
+                pagamento.setDesconto(rs.getDouble("desconto"));
 
                 pagamentos.add(pagamento);
             }
@@ -73,7 +73,7 @@ public class PagamentoRepositorio {
                 pagamento.setCaixa_cpf(rs.getString("caixa_cpf"));
                 pagamento.setIdVenda(rs.getInt("idVenda"));
                 pagamento.setValorTotal(rs.getDouble("valorTotal"));
-                pagamento.setValorTotal(rs.getDouble("desconto"));
+                pagamento.setDesconto(rs.getDouble("desconto"));
                 return pagamento;
             } else {
                 return null;
