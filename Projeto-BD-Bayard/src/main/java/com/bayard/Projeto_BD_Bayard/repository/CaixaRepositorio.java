@@ -177,4 +177,51 @@ public class CaixaRepositorio {
             throw new RuntimeException(e);
         }
     }
+
+    public List<Caixa> buscarCaixasPorNomeOuCpf(String termo) throws SQLException {
+        List<Caixa> lista = new ArrayList<>();
+
+        String sql = "SELECT c.cpf, c.login, c.senha, " +
+                "f.telefone_1, f.telefone_2, f.nome, f.vendedor_responsavel, f.chefia, f.ativo " +
+                "FROM Caixa c " +
+                "JOIN Funcionarios f ON c.cpf = f.cpf " +
+                "WHERE f.cpf LIKE ? OR f.nome LIKE ?";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            String searchTerm = "%" + termo + "%";
+            stmt.setString(1, searchTerm);
+            stmt.setString(2, searchTerm);
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Funcionario funcionario = new Funcionario(
+                        rs.getString("cpf"),
+                        rs.getString("telefone_1"),
+                        rs.getString("telefone_2"),
+                        rs.getString("nome"),
+                        rs.getBoolean("vendedor_responsavel"),
+                        rs.getBoolean("chefia"),
+                        rs.getBoolean("ativo")
+                );
+
+                Caixa caixa = new Caixa(
+                        funcionario,
+                        rs.getString("login"),
+                        rs.getString("senha")
+                );
+
+                lista.add(caixa);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar caixas: " + e.getMessage());
+            throw e;
+        }
+
+        return lista;
+    }
+
 }

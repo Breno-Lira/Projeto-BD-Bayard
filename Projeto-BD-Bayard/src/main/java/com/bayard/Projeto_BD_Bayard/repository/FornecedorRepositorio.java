@@ -106,4 +106,29 @@ public class FornecedorRepositorio {
         }
     }
 
+    public List<Fornecedor> buscarFornecedoresPorNomeOuCnpj(String termo) throws SQLException {
+        List<Fornecedor> lista = new ArrayList<>();
+        String sql = "SELECT * FROM Fornecedor WHERE cnpj LIKE ? OR nome LIKE ?";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            String searchTerm = "%" + termo + "%";
+            stmt.setString(1, searchTerm);
+            stmt.setString(2, searchTerm);
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Fornecedor fornecedor = new Fornecedor(
+                        rs.getString("cnpj"),
+                        rs.getString("nome"),
+                        rs.getString("transportaadora")
+                );
+                lista.add(fornecedor);
+            }
+        }
+
+        return lista;
+    }
+
 }

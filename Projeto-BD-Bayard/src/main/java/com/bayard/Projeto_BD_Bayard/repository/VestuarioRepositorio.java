@@ -192,5 +192,43 @@ public class VestuarioRepositorio {
         }
     }
 
+    public List<Vestuario> buscarVestuariosPorTermo(String termo) throws SQLException {
+        List<Vestuario> lista = new ArrayList<>();
+        String sql = "SELECT v.codigo, v.genero, v.tamanho, v.faixa_etaria, " +
+                "p.nome, p.cor_primaria, p.cor_secundaria, p.preco, p.qtdProduto " +
+                "FROM Vestuario v " +
+                "JOIN Produto p ON v.codigo = p.codigo " +
+                "WHERE p.nome LIKE ? OR p.codigo LIKE ? ";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            String searchTerm = "%" + termo + "%";
+            stmt.setString(1, searchTerm);
+            stmt.setString(2, searchTerm);
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Produto produto = new Produto(
+                        rs.getInt("codigo"),
+                        rs.getString("nome"),
+                        rs.getString("cor_primaria"),
+                        rs.getString("cor_secundaria"),
+                        rs.getDouble("preco"),
+                        rs.getInt("qtdProduto")
+                );
+                Vestuario vestuario = new Vestuario(
+                        produto,
+                        rs.getString("genero"),
+                        rs.getString("tamanho"),
+                        rs.getString("faixa_etaria")
+                );
+                lista.add(vestuario);
+            }
+        }
+        return lista;
+    }
+
+
 
 }

@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -84,6 +85,20 @@ public class ProdutoController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Erro ao buscar produto: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("produtos/buscar")
+    public ResponseEntity<List<Produto>> buscarProdutos(@RequestParam String termo) {
+        try {
+            List<Produto> produtos = produtoRepositorio.buscarProdutosPorNomeOuCodigo(termo);
+            if (produtos.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(produtos);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 

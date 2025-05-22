@@ -179,4 +179,46 @@ public class VendedorRepositorio {
             throw new RuntimeException(e);
         }
     }
+
+    public List<Vendedor> buscarVendedoresPorNomeOuCpf(String termo) throws SQLException {
+        List<Vendedor> lista = new ArrayList<>();
+
+        String sql = "SELECT v.cpf, v.numVenda, f.telefone_1, f.telefone_2, f.nome, " +
+                "f.vendedor_responsavel, f.chefia, f.ativo " +
+                "FROM Vendedor v " +
+                "JOIN Funcionarios f ON v.cpf = f.cpf " +
+                "WHERE f.cpf LIKE ? OR f.nome LIKE ?";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            String searchTerm = "%" + termo + "%";
+            stmt.setString(1, searchTerm);
+            stmt.setString(2, searchTerm);
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Funcionario funcionario = new Funcionario(
+                        rs.getString("cpf"),
+                        rs.getString("telefone_1"),
+                        rs.getString("telefone_2"),
+                        rs.getString("nome"),
+                        rs.getBoolean("vendedor_responsavel"),
+                        rs.getBoolean("chefia"),
+                        rs.getBoolean("ativo")
+                );
+
+                Vendedor vendedor = new Vendedor(funcionario, rs.getInt("numVenda"));
+                lista.add(vendedor);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar vendedores: " + e.getMessage());
+            throw e;
+        }
+
+        return lista;
+    }
+
 }

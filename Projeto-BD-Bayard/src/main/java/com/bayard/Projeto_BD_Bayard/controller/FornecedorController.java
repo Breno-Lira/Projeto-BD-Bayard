@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -77,6 +78,21 @@ public class FornecedorController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Erro ao buscar fornecedor: " + e.getMessage());
+        }
+    }
+
+
+    @GetMapping("/fornecedores/buscar")
+    public ResponseEntity<List<Fornecedor>> buscarFornecedores(@RequestParam String termo) {
+        try {
+            List<Fornecedor> fornecedores = fornecedorRepositorio.buscarFornecedoresPorNomeOuCnpj(termo);
+            if (fornecedores.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(fornecedores);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 

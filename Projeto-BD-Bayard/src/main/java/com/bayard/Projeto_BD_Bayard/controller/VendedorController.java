@@ -80,4 +80,19 @@ public class VendedorController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro: " + e.getMessage());
         }
     }
+
+    @GetMapping("vendedor/buscar")
+    public ResponseEntity<List<Vendedor>> buscarVendedores(@RequestParam String termo) {
+        try {
+            List<Vendedor> vendedores = vendedorRepositorio.buscarVendedoresPorNomeOuCpf(termo);
+            if (vendedores.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(vendedores);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 }

@@ -82,4 +82,19 @@ public class EstoquistaController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro: " + e.getMessage());
         }
     }
+
+    @GetMapping("estoquista/buscar")
+    public ResponseEntity<List<Estoquista>> buscarEstoquistas(@RequestParam String termo) {
+        try {
+            List<Estoquista> estoquistas = estoquistaRepositorio.buscarEstoquistasPorNomeOuCpf(termo);
+            if (estoquistas.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(estoquistas);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 }

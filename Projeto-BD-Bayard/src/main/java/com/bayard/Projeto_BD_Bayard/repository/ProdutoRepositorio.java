@@ -144,5 +144,35 @@ public class ProdutoRepositorio {
         }
     }
 
+    public List<Produto> buscarProdutosPorNomeOuCodigo(String termo) throws SQLException {
+        List<Produto> lista = new ArrayList<>();
+
+        String sql = "SELECT * FROM Produto WHERE nome LIKE ? OR CAST(codigo AS CHAR) LIKE ?";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            String searchTerm = "%" + termo + "%";
+            stmt.setString(1, searchTerm);
+            stmt.setString(2, searchTerm);
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Produto produto = new Produto();
+                produto.setCodigo(rs.getInt("codigo"));
+                produto.setNome(rs.getString("nome"));
+                produto.setCor_primaria(rs.getString("cor_primaria"));
+                produto.setCor_secundaria(rs.getString("cor_secundaria"));
+                produto.setPreco(rs.getDouble("preco"));
+                produto.setQtdProduto(rs.getInt("qtdProduto"));
+
+                lista.add(produto);
+            }
+        }
+
+        return lista;
+    }
+
 
 }

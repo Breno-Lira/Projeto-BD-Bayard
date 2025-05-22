@@ -195,4 +195,51 @@ public class EstoquistaRepositorio {
             throw new RuntimeException(e);
         }
     }
+
+    public List<Estoquista> buscarEstoquistasPorNomeOuCpf(String termo) throws SQLException {
+        List<Estoquista> lista = new ArrayList<>();
+
+        String sql = "SELECT e.cpf, e.dataUltimoInventario, e.acessoEstoque, " +
+                "f.telefone_1 AS telefone1, f.telefone_2 AS telefone2, f.nome, f.vendedor_responsavel, f.chefia, f.ativo " +
+                "FROM Estoquista e " +
+                "JOIN Funcionarios f ON e.cpf = f.cpf " +
+                "WHERE f.cpf LIKE ? OR f.nome LIKE ?";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            String searchTerm = "%" + termo + "%";
+            stmt.setString(1, searchTerm);
+            stmt.setString(2, searchTerm);
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Funcionario funcionario = new Funcionario(
+                        rs.getString("cpf"),
+                        rs.getString("telefone1"),
+                        rs.getString("telefone2"),
+                        rs.getString("nome"),
+                        rs.getBoolean("vendedor_responsavel"),
+                        rs.getBoolean("chefia"),
+                        rs.getBoolean("ativo")
+                );
+
+                java.sql.Date dataSql = rs.getDate("dataUltimoInventario");
+                LocalDate dataUltimoInventario = (dataSql != null) ? dataSql.toLocalDate() : null;
+
+                String acessoEstoque = rs.getString("acessoEstoque");
+
+                Estoquista estoquista = new Estoquista(funcionario, dataUltimoInventario, acessoEstoque);
+                lista.add(estoquista);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar estoquistas: " + e.getMessage());
+            throw e;
+        }
+
+        return lista;
+    }
+
 }

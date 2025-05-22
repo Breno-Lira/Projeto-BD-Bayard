@@ -1,6 +1,7 @@
 package com.bayard.Projeto_BD_Bayard.controller;
 
 import com.bayard.Projeto_BD_Bayard.model.Calcados;
+import com.bayard.Projeto_BD_Bayard.model.Vestuario;
 import com.bayard.Projeto_BD_Bayard.repository.CalcadosRepositorio;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -79,5 +80,20 @@ public class CalcadosController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro: " + e.getMessage());
         }
     }
+
+    @GetMapping("/calcados/buscar")
+    public ResponseEntity<List<Calcados>> buscarCalcados(@RequestParam String termo) {
+        try {
+            List<Calcados> resultados = calcadosRepositorio.buscarCalcadosPorTermo(termo);
+            if (resultados.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(resultados);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 
 }

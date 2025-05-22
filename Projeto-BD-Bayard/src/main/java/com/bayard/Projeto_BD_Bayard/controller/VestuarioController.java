@@ -83,5 +83,19 @@ public class VestuarioController {
         }
     }
 
+    @GetMapping("/vestuario/buscar")
+    public ResponseEntity<List<Vestuario>> buscarVestuarios(@RequestParam String termo) {
+        try {
+            List<Vestuario> resultados = vestuarioRepositorio.buscarVestuariosPorTermo(termo);
+            if (resultados.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(resultados);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 
 }

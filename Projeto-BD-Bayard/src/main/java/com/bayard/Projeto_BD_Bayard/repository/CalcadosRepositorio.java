@@ -179,4 +179,45 @@ public class CalcadosRepositorio {
             }
         }
     }
+
+    public List<Calcados> buscarCalcadosPorTermo(String termo) throws SQLException {
+        List<Calcados> lista = new ArrayList<>();
+        String sql = "SELECT c.codigo, c.genero, c.tamanho, c.faixa_etaria, " +
+                "p.nome, p.cor_primaria, p.cor_secundaria, p.preco, p.qtdProduto " +
+                "FROM Calcados c " +
+                "JOIN Produto p ON c.codigo = p.codigo " +
+                "WHERE p.nome LIKE ? OR p.codigo LIKE ? ";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            String searchTerm = "%" + termo + "%";
+            stmt.setString(1, searchTerm);
+            stmt.setString(2, searchTerm);
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Produto produto = new Produto(
+                        rs.getInt("codigo"),
+                        rs.getString("nome"),
+                        rs.getString("cor_primaria"),
+                        rs.getString("cor_secundaria"),
+                        rs.getDouble("preco"),
+                        rs.getInt("qtdProduto")
+                );
+
+                Calcados calcado = new Calcados();
+                calcado.setProduto(produto);
+                calcado.setGenero(rs.getString("genero"));
+                calcado.setTamanho(rs.getInt("tamanho"));
+                calcado.setFaixaEtaria(rs.getString("faixa_etaria"));
+
+                lista.add(calcado);
+            }
+        }
+
+        return lista;
+    }
+
+
 }

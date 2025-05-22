@@ -80,4 +80,19 @@ public class CaixaController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro: " + e.getMessage());
         }
     }
+
+    @GetMapping("caixa/buscar")
+    public ResponseEntity<List<Caixa>> buscarCaixas(@RequestParam String termo) {
+        try {
+            List<Caixa> caixas = caixaRepositorio.buscarCaixasPorNomeOuCpf(termo);
+            if (caixas.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(caixas);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 }
