@@ -76,7 +76,9 @@ public class VendedorController {
         try {
             vendedorRepositorio.excluirVendedor(cpf);
             return ResponseEntity.ok("Vendedor excluído com sucesso!");
-        } catch (Exception e) {
+        }catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro: " + e.getMessage());
         }
     }
@@ -94,5 +96,4 @@ public class VendedorController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
 }

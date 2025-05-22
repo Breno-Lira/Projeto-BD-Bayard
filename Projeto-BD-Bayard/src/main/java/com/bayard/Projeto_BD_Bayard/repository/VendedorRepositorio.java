@@ -119,6 +119,10 @@ public class VendedorRepositorio {
     }
 
     public void excluirVendedor(String cpf) throws SQLException {
+        if (verificarFuncionarioAtivo(cpf)) {
+            throw new IllegalStateException("Vendedor está ativo. Não pode ser excluído.");
+        }
+
         String sqlVendedor = "DELETE FROM Vendedor WHERE cpf = ?";
         String sqlFuncionario = "DELETE FROM Funcionarios WHERE cpf = ?";
 
@@ -221,4 +225,20 @@ public class VendedorRepositorio {
         return lista;
     }
 
+    public boolean verificarFuncionarioAtivo(String cpf) throws SQLException {
+        String sql = "SELECT verificaFuncionarioAtivo(?)";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, cpf);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getBoolean(1);
+            } else {
+                throw new SQLException("Não foi possível verificar se o funcionário está ativo.");
+            }
+        }
+    }
 }

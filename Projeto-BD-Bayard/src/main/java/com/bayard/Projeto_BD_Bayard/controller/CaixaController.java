@@ -76,7 +76,9 @@ public class CaixaController {
         try {
             caixaRepositorio.excluirCaixa(cpf);
             return ResponseEntity.ok("Caixa excluído com sucesso!");
-        } catch (Exception e) {
+        }catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro: " + e.getMessage());
         }
     }
