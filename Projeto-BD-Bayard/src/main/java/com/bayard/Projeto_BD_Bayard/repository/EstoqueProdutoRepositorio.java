@@ -103,4 +103,31 @@ public class EstoqueProdutoRepositorio {
             throw new RuntimeException(e);
         }
     }
+
+
+    public List<EstoqueProduto> buscarPorCodigoProdutoParcial(String termoBusca) throws SQLException {
+        String sql = "SELECT * FROM Estoque_produto WHERE codigo_produto LIKE ?";
+        List<EstoqueProduto> lista = new ArrayList<>();
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, "%" + termoBusca + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    EstoqueProduto ep = new EstoqueProduto();
+                    ep.setId_estoque(rs.getInt("id_estoque"));
+                    ep.setCodigo_produto(rs.getInt("codigo_produto"));
+                    ep.setQuantidade_produtos(rs.getInt("quantidade_produtos"));
+                    lista.add(ep);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar estoque por código parcial: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+
+        return lista;
+    }
 }

@@ -1,11 +1,13 @@
 package com.bayard.Projeto_BD_Bayard.controller;
 
 import com.bayard.Projeto_BD_Bayard.model.EstoqueProduto;
+import com.bayard.Projeto_BD_Bayard.model.Fornecedor;
 import com.bayard.Projeto_BD_Bayard.repository.EstoqueProdutoRepositorio;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -72,6 +74,20 @@ public class EstoqueProdutoController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
         } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/estoque_produto/buscar")
+    public ResponseEntity<List<EstoqueProduto>> buscarFornecedores(@RequestParam String termo) {
+        try {
+            List<EstoqueProduto> estoqueProdutos = estoqueProdutoRepositorio.buscarPorCodigoProdutoParcial(termo);
+            if (estoqueProdutos.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(estoqueProdutos);
+        } catch (SQLException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

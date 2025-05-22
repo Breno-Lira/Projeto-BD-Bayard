@@ -73,4 +73,63 @@ public class VendaRepositorio {
             throw new RuntimeException(e);
         }
     }
+
+    public List<Venda> buscarVendasPorCpfVendedor(String cpfParcial) {
+        List<Venda> vendas = new ArrayList<>();
+        String sql = "SELECT * FROM Venda WHERE vendedor_cpf LIKE ?";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, "%" + cpfParcial + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Venda venda = new Venda();
+                    venda.setIdVenda(rs.getInt("idVenda"));
+                    venda.setDataVenda(rs.getDate("dataVenda").toLocalDate());
+                    venda.setValorSubtotal(rs.getDouble("valorSubtotal"));
+                    venda.setFkVendedorCPF(rs.getString("vendedor_cpf"));
+                    venda.setFkClienteCPF(rs.getString("cliente_cpf"));
+
+                    vendas.add(venda);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar vendas por CPF do vendedor: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+
+        return vendas;
+    }
+
+    public List<Venda> buscarVendasPorCpfCliente(String cpfParcial) {
+        List<Venda> vendas = new ArrayList<>();
+        String sql = "SELECT * FROM Venda WHERE cliente_cpf LIKE ?";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, "%" + cpfParcial + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Venda venda = new Venda();
+                    venda.setIdVenda(rs.getInt("idVenda"));
+                    venda.setDataVenda(rs.getDate("dataVenda").toLocalDate());
+                    venda.setValorSubtotal(rs.getDouble("valorSubtotal"));
+                    venda.setFkVendedorCPF(rs.getString("vendedor_cpf"));
+                    venda.setFkClienteCPF(rs.getString("cliente_cpf"));
+
+                    vendas.add(venda);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar vendas por CPF do cliente: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+
+        return vendas;
+    }
+
 }

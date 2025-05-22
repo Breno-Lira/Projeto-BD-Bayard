@@ -54,6 +54,16 @@ public class ArmazenaController {
         }
     }
 
+    @GetMapping("armazena/buscar-por-produto")
+    public List<Armazena> buscarPorProdutoLike(@RequestParam String codigo) {
+        return armazenaRepositorio.buscarPorCodigoProdutoLike(codigo);
+    }
+
+    @GetMapping("armazena/buscar-por-estoquista")
+    public List<Armazena> buscarPorEstoquistaLike(@RequestParam String cpf) {
+        return armazenaRepositorio.buscarPorEstoquistaCpfLike(cpf);
+    }
+
 
 }
 

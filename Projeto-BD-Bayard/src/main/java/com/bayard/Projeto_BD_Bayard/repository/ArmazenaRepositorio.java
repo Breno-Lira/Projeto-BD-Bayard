@@ -102,4 +102,62 @@ public class ArmazenaRepositorio {
         }
     }
 
+    public List<Armazena> buscarPorEstoquistaCpfLike(String cpfParcial) {
+        List<Armazena> armazenas = new ArrayList<>();
+        String sql = "SELECT * FROM Armazena WHERE estoquista_cpf LIKE ?";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, "%" + cpfParcial + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Armazena armazena = new Armazena();
+                    armazena.setEstoquista_cpf(rs.getString("estoquista_cpf"));
+                    armazena.setCodigo_produto(rs.getInt("codigo_produto"));
+                    armazena.setQtdArmazenada(rs.getInt("qtdArmazenada"));
+                    armazena.setArmazena_id(rs.getString("armazena_id"));
+
+                    armazenas.add(armazena);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar Armazena por CPF parcial: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+
+        return armazenas;
+    }
+
+
+    public List<Armazena> buscarPorCodigoProdutoLike(String codigoProdutoParcial) {
+        List<Armazena> armazenas = new ArrayList<>();
+        String sql = "SELECT * FROM Armazena WHERE codigo_produto LIKE ?";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, "%" + codigoProdutoParcial + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Armazena armazena = new Armazena();
+                    armazena.setEstoquista_cpf(rs.getString("estoquista_cpf"));
+                    armazena.setCodigo_produto(rs.getInt("codigo_produto"));
+                    armazena.setQtdArmazenada(rs.getInt("qtdArmazenada"));
+                    armazena.setArmazena_id(rs.getString("armazena_id"));
+
+                    armazenas.add(armazena);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar Armazena por código parcial: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+
+        return armazenas;
+    }
+
+
 }
