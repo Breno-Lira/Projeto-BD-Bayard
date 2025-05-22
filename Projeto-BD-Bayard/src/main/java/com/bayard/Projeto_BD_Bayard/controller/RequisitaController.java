@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/requisita")
+@CrossOrigin("http://localhost:3000")
 public class RequisitaController {
 
     private final RequisitaRepositorio requisitaRepositorio;
@@ -43,7 +44,7 @@ public class RequisitaController {
         }
     }
 
-    @DeleteMapping("/{codigo}")
+    @DeleteMapping("/delete/{codigo}")
     public String deletarRequisicao(@PathVariable int codigo) {
         try {
             requisitaRepositorio.deletarRequisicaoPorCodigo(codigo);
