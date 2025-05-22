@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -78,5 +79,18 @@ public class ClienteController {
         }
     }
 
+    @GetMapping("clientes/buscar")
+    public ResponseEntity<List<Cliente>> buscarClientesPorNomeOuCpf(@RequestParam String termo) {
+        try {
+            List<Cliente> clientes = clienteRepositorio.buscarClientesPorNomeOuCpf(termo);
+            if (clientes.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(clientes);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
 }

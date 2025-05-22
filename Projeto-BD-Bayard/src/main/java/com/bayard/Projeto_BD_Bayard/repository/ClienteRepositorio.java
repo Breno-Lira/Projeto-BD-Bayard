@@ -138,4 +138,40 @@ public class ClienteRepositorio {
             throw new RuntimeException(e);
         }
     }
+
+    public List<Cliente> buscarClientesPorNomeOuCpf(String termo) throws SQLException {
+        List<Cliente> lista = new ArrayList<>();
+        String sql = "SELECT * FROM Cliente WHERE cpf LIKE ? OR nome LIKE ?";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            String searchTerm = "%" + termo + "%";
+            stmt.setString(1, searchTerm);
+            stmt.setString(2, searchTerm);
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Cliente cliente = new Cliente(
+                        rs.getString("cpf"),
+                        rs.getString("nome"),
+                        rs.getString("interesse1"),
+                        rs.getString("interesse2"),
+                        rs.getDate("data_nascimento") != null ? rs.getDate("data_nascimento").toLocalDate() : null,
+                        rs.getString("cidade"),
+                        rs.getString("bairro"),
+                        rs.getString("rua"),
+                        rs.getInt("numero"),
+                        rs.getString("cep"),
+                        rs.getString("complemento")
+                );
+
+                lista.add(cliente);
+            }
+        }
+
+        return lista;
+    }
+
+
 }
