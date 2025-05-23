@@ -91,4 +91,29 @@ public class VendaItemRepositorio {
             throw new RuntimeException(e);
         }
     }
+
+    public List<VendaItem> buscarItensVendaPorIdVenda(int idVenda) throws SQLException {
+        List<VendaItem> lista = new ArrayList<>();
+        String sql = "SELECT * FROM venda_item WHERE idVenda = ?";
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, idVenda);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                VendaItem item = new VendaItem();
+                item.setIdVendaItem(rs.getInt("idVendaItem"));
+                item.setCodigo_produto(rs.getInt("codigo_produto"));
+                item.setQtdVendaItem(rs.getInt("qtdVendaItem"));
+                item.setCodigo_produto(rs.getInt("codigo_produto"));
+                item.setIdVenda(rs.getInt("idVenda"));
+
+                lista.add(item);
+            }
+        }
+        return lista;
+    }
+
 }

@@ -62,4 +62,20 @@ public class VendaItemController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro: " + e.getMessage());
         }
     }
+
+    @GetMapping("/buscar-por-venda/{idVenda}")
+    public ResponseEntity<List<VendaItem>> buscarPorIdVenda(@PathVariable int idVenda) {
+        try {
+            List<VendaItem> itens = vendaItemRepositorio.buscarItensVendaPorIdVenda(idVenda);
+            if (itens.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(itens);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
 }
