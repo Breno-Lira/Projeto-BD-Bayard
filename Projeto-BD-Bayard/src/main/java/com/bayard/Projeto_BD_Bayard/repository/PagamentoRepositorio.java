@@ -12,7 +12,7 @@ import java.util.List;
 public class PagamentoRepositorio {
 
     public void inserirPagamento(Pagamento pagamento) throws SQLException {
-        String sql = "INSERT INTO pagamento (forma_pag, nota_fiscal, caixa_cpf, idVenda, valorTotal, desconto) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO pagamento (forma_pag, nota_fiscal, caixa_cpf, idVenda, desconto) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = ConexaoBD.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -21,8 +21,7 @@ public class PagamentoRepositorio {
             stmt.setString(2, pagamento.getNota_fiscal());
             stmt.setString(3, pagamento.getCaixa_cpf());
             stmt.setInt(4, pagamento.getIdVenda());
-            stmt.setDouble(5, pagamento.getValorTotal());
-            stmt.setDouble(6, pagamento.getDesconto());
+            stmt.setDouble(5, pagamento.getDesconto());
 
             stmt.executeUpdate();
         }
