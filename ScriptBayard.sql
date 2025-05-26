@@ -533,3 +533,4 @@ VALUES (1, 1, 1);
 
 INSERT INTO Venda_item (qtdVendaItem, codigo_produto, idVenda)
 VALUES (2, 2, 2);
+
