@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -61,4 +62,23 @@ public class DevolucaoClienteController {
                     .body("Erro ao atualizar devolução cliente: " + e.getMessage());
         }
     }
+
+    @GetMapping("devolucoes/buscar")
+    public ResponseEntity<List<DevolucaoCliente>> buscarDevolucoesComFiltro(
+            @RequestParam(required = false) Integer produtoCodigo,
+            @RequestParam(required = false) String cpfCliente,
+            @RequestParam(required = false) String cpfVendedor) {
+
+        try {
+            List<DevolucaoCliente> devolucoes = devolucaoClienteRepositorio.buscarDevolucoesPorFiltros(produtoCodigo, cpfCliente, cpfVendedor);
+            if (devolucoes.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(devolucoes);
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
+    }
+
 }

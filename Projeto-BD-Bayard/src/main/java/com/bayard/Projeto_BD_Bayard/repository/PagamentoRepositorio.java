@@ -118,4 +118,44 @@ public class PagamentoRepositorio {
             throw new RuntimeException(e);
         }
     }
+
+    public List<Pagamento> buscarPagamentosPorFiltros(String cpfCaixa, Integer idVenda) throws SQLException {
+        List<Pagamento> lista = new ArrayList<>();
+        String sql = "SELECT * FROM pagamento WHERE 1=1";
+        List<Object> params = new ArrayList<>();
+
+        if (cpfCaixa != null && !cpfCaixa.trim().isEmpty()) {
+            sql += " AND caixa_cpf LIKE ?";
+            params.add("%" + cpfCaixa + "%");
+        }
+
+        if (idVenda != null) {
+            sql += " AND idVenda = ?";
+            params.add(idVenda);
+        }
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Pagamento pagamento = new Pagamento();
+                    pagamento.setIdPagamento(rs.getInt("idPagamento")); // caso exista coluna id
+                    pagamento.setForma_pag(rs.getString("forma_pag"));
+                    pagamento.setNota_fiscal(rs.getString("nota_fiscal"));
+                    pagamento.setCaixa_cpf(rs.getString("caixa_cpf"));
+                    pagamento.setIdVenda(rs.getInt("idVenda"));
+                    pagamento.setDesconto(rs.getDouble("desconto"));
+                    lista.add(pagamento);
+                }
+            }
+        }
+
+        return lista;
+    }
+
 }

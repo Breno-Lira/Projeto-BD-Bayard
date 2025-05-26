@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -75,4 +77,18 @@ public class PagamentoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @GetMapping("/pagamento/buscar")
+    public List<Pagamento> buscarPagamentosPorFiltros(
+            @RequestParam(required = false) String cpfCaixa,
+            @RequestParam(required = false) Integer idVenda) {
+
+        try {
+            return pagamentoRepositorio.buscarPagamentosPorFiltros(cpfCaixa, idVenda);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return Collections.emptyList();
+        }
+    }
+
 }

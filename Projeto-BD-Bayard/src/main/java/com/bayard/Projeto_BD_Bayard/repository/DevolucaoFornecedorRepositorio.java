@@ -87,4 +87,49 @@ public class DevolucaoFornecedorRepositorio {
             throw new RuntimeException(e);
         }
     }
+
+    public List<DevolucaoFornecedor> buscarDevolucoesFornecedorPorFiltros(String estoquistaCpf, String fornecedorCnpj, Integer codigoProduto) throws SQLException {
+        List<DevolucaoFornecedor> lista = new ArrayList<>();
+        String sql = "SELECT * FROM Devolucao_fornecedor WHERE 1=1";
+        List<Object> params = new ArrayList<>();
+
+        if (estoquistaCpf != null && !estoquistaCpf.isEmpty()) {
+            sql += " AND estoquista_cpf LIKE ?";
+            params.add("%" + estoquistaCpf + "%");
+        }
+
+        if (fornecedorCnpj != null && !fornecedorCnpj.isEmpty()) {
+            sql += " AND fornecedor_cnpj LIKE ?";
+            params.add("%" + fornecedorCnpj + "%");
+        }
+
+        if (codigoProduto != null) {
+            sql += " AND codigo_produto LIKE ?";
+            params.add(codigoProduto + "%");
+        }
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    DevolucaoFornecedor devolucao = new DevolucaoFornecedor();
+                    devolucao.setIdDevFornecedor(rs.getInt("id_dev_fornecedor"));
+                    devolucao.setEstoquistaCpf(rs.getString("estoquista_cpf"));
+                    devolucao.setFornecedorCnpj(rs.getString("fornecedor_cnpj"));
+                    devolucao.setCodigoProduto(rs.getInt("codigo_produto"));
+                    devolucao.setDevData(rs.getDate("devData").toLocalDate());
+                    devolucao.setQtdProduto(rs.getInt("qtdProduto"));
+                    lista.add(devolucao);
+                }
+            }
+        }
+
+        return lista;
+    }
+
 }

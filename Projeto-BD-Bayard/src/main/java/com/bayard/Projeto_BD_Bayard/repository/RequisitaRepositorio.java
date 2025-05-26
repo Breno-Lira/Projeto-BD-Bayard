@@ -88,4 +88,49 @@ public class RequisitaRepositorio {
             throw new RuntimeException(e);
         }
     }
+
+    public List<Requisita> buscarRequisicoesFiltradas(String cpfEstoquista, Integer codigoProduto, String cnpjFornecedor) throws SQLException {
+        List<Requisita> lista = new ArrayList<>();
+        String sql = "SELECT * FROM Requisita WHERE 1=1";
+        List<Object> params = new ArrayList<>();
+
+        if (cpfEstoquista != null && !cpfEstoquista.trim().isEmpty()) {
+            sql += " AND estoquista_cpf LIKE ?";
+            params.add("%" + cpfEstoquista + "%");
+        }
+
+        if (codigoProduto != null) {
+            sql += " AND codigo_produto = ?";
+            params.add(codigoProduto);
+        }
+
+        if (cnpjFornecedor != null && !cnpjFornecedor.trim().isEmpty()) {
+            sql += " AND fornecedor_cnpj LIKE ?";
+            params.add("%" + cnpjFornecedor + "%");
+        }
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Requisita req = new Requisita();
+                    req.setCodigoReq(rs.getInt("codigo_req"));
+                    req.setEstoquistaCpf(rs.getString("estoquista_cpf"));
+                    req.setCodigoProduto(rs.getInt("codigo_produto"));
+                    req.setFornecedorCnpj(rs.getString("fornecedor_cnpj"));
+                    req.setQtdProduto(rs.getInt("qtdProduto"));
+                    lista.add(req);
+                }
+            }
+        }
+
+        return lista;
+    }
+
+
 }

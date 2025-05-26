@@ -50,4 +50,46 @@ public class RepoeRepositorio {
         }
         return repoem;
     }
+
+    public List<Repoe> buscarRepoesPorFiltros(Integer idEstoqueProduto, Integer idDevCliente, String estoquistaCpf) throws SQLException {
+        List<Repoe> lista = new ArrayList<>();
+        String sql = "SELECT * FROM repoe WHERE 1=1";
+        List<Object> params = new ArrayList<>();
+
+        if (idEstoqueProduto != null) {
+            sql += " AND id_estoque_produto = ?";
+            params.add(idEstoqueProduto);
+        }
+
+        if (idDevCliente != null) {
+            sql += " AND id_dev_cliente = ?";
+            params.add(idDevCliente);
+        }
+
+        if (estoquistaCpf != null && !estoquistaCpf.isEmpty()) {
+            sql += " AND estoquista_cpf LIKE ?";
+            params.add("%" + estoquistaCpf + "%");
+        }
+
+        try (Connection conn = ConexaoBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Repoe repoe = new Repoe();
+                    repoe.setId_estoque_produto(rs.getInt("id_estoque_produto"));
+                    repoe.setId_dev_cliente(rs.getInt("id_dev_cliente"));
+                    repoe.setEstoque_cpf(rs.getString("estoquista_cpf"));
+                    lista.add(repoe);
+                }
+            }
+        }
+
+        return lista;
+    }
+
 }
