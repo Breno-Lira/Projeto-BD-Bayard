@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin("http://localhost:3000")
@@ -29,13 +30,23 @@ public class VendaItemController {
     }
 
     @PostMapping("vendaItem/add")
-    public ResponseEntity<String> addVendaItem(@RequestBody VendaItem vendaItem) {
+    public ResponseEntity<?> addVendaItem(@RequestBody VendaItem vendaItem) {
         try {
             vendaItemRepositorio.inserirVendaItem(vendaItem);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Venda Item inserida com sucesso!");
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Venda Item inserida com sucesso!"));
         } catch (SQLException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro ao inserir item venda: " + e.getMessage());
+            String erro = e.getMessage();
+
+            if (erro.contains("Produto não encontrado no estoque")) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("message", "Produto não encontrado no estoque."));
+            } else if (erro.contains("Estoque insuficiente para a venda")) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("message", "Estoque insuficiente para a venda."));
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(Map.of("message", "Erro ao inserir item venda: " + erro));
+            }
         }
     }
 
