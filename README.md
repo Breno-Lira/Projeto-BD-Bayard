@@ -26,6 +26,9 @@ Link para o nosso Front-end: https://github.com/Breno-Lira/Projeto-BD-Bayard-Fro
  
  Para mais detalhes da implementação do projeto e etapas de modelagem do banco, acesse o link:
 https://docs.google.com/document/d/1sP8xCnILBgO4uZt2B_Tof3y8Ye65GX9PXYEcPovn4g0/edit?usp=sharing
+
+ Para mais detalhes da segunda implementação do projeto com mais funcionaliadades, acesse o link:
+https://docs.google.com/document/d/1cWUNDL2fU1JMHTMbM8CA3tRbvnzBQe7Au6tDcSBQVDg/edit?usp=sharing
 </details>
 
 <details>
